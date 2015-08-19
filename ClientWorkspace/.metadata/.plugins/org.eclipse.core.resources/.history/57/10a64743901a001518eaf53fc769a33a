@@ -1,0 +1,10 @@
+package JSHOP2Wrapper;
+
+public class JSHOP2WrapperTest {
+
+	public static void main(String[] args) {
+		String domainFileName = "F:\epclaimcodes\shop2\blocks";
+
+	}
+
+}

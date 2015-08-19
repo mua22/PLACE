@@ -1,0 +1,76 @@
+package epclaim.gui;
+
+import javax.swing.JPanel;
+
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.util.mxMorphing;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource.mxIEventListener;
+import com.mxgraph.view.mxGraph;
+
+import java.awt.BorderLayout;
+
+public class GraphPanel extends JPanel{
+
+	/**
+	 * Create the panel.
+	 */
+	mxIGraphLayout layout;
+	private final mxGraph graph = new mxGraph();
+	public GraphPanel() {
+		setLayout(new BorderLayout(0, 0));
+		
+		this.addTestData();
+		
+		
+		final mxGraphComponent graphComponent = new mxGraphComponent(graph);
+		layout = new mxParallelEdgeLayout(graph);
+		mxIGraphLayout layout = new mxFastOrganicLayout(graph);
+
+	    // layout using morphing
+	    graph.getModel().beginUpdate();
+	    try {
+	        layout.execute(graph.getDefaultParent());
+	    } finally {
+	        mxMorphing morph = new mxMorphing(graphComponent,40, 1.2, 40);
+
+	        morph.addListener(mxEvent.DONE, new mxIEventListener() {
+
+	            @Override
+	            public void invoke(Object arg0, mxEventObject arg1) {
+	                graph.getModel().endUpdate();
+	                // fitViewport();
+	            }
+
+	        });
+
+	        morph.startAnimation(); 
+		layout.execute(graph.getDefaultParent());
+		this.add(graphComponent, BorderLayout.CENTER);
+	    }
+	}
+	public void addTestData(){
+		Object parent = graph.getDefaultParent();
+		graph.getModel().beginUpdate();
+		try
+		{
+		   Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 80,
+		         30);
+		   Object v2 = graph.insertVertex(parent, null, "World!",
+		         240, 150, 80, 30);
+		   Object v3 = graph.insertVertex(parent, null, "World11!",
+			         240, 150, 80, 30);
+		   graph.insertEdge(parent, null, "Edge", v1, v2);
+		   graph.insertEdge(parent, null, "Edge", v3, v2);
+		}
+		finally
+		{
+		   graph.getModel().endUpdate();
+		}
+		
+	}
+}

@@ -1,0 +1,49 @@
+package epclaim.gui;
+
+import javax.swing.JPanel;
+
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.view.mxGraph;
+
+import java.awt.BorderLayout;
+
+public class GraphPanel extends JPanel{
+
+	/**
+	 * Create the panel.
+	 */
+	mxIGraphLayout layout;
+	private final mxGraph graph = new mxGraph();
+	public GraphPanel() {
+		setLayout(new BorderLayout(0, 0));
+		
+		this.addTestData();
+		
+		
+		final mxGraphComponent graphComponent = new mxGraphComponent(graph);
+		layout = new mxParallelEdgeLayout(graph);
+		
+		this.add(graphComponent, BorderLayout.CENTER);
+	}
+	public void addTestData(){
+		Object parent = graph.getDefaultParent();
+		graph.getModel().beginUpdate();
+		try
+		{
+		   Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 80,
+		         30);
+		   Object v2 = graph.insertVertex(parent, null, "World!",
+		         240, 150, 80, 30);
+		   Object v3 = graph.insertVertex(parent, null, "World11!",
+			         240, 150, 80, 30);
+		   graph.insertEdge(parent, null, "Edge", v1, v2,v3);
+		}
+		finally
+		{
+		   graph.getModel().endUpdate();
+		}
+		
+	}
+}

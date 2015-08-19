@@ -1,0 +1,41 @@
+package epclaim.compiler;
+
+import epclaim.utils.ConditionLogic;
+
+public class Action {
+	private String name;
+	private FunctionSignature message;
+	private FunctionSignatureCollection conditions;
+	private ConditionLogic conditionLogic;
+	
+
+	public Action(String name) {
+		super();
+		this.name = name;
+		conditions = new FunctionSignatureCollection();
+		this.conditionLogic = ConditionLogic.NOTHING;
+	}
+
+	public FunctionSignature getMessage() {
+		return message;
+	}
+
+	public void setMessage(FunctionSignature message) {
+		this.message = message;
+	}
+	
+	public boolean addCondition(FunctionSignature e) {
+		return conditions.add(e);
+	}
+	public void setConditionLogic(ConditionLogic conditionLogic) {
+		
+		this.conditionLogic = conditionLogic;
+	}
+	@Override
+	public String toString() {
+		return "Action [name=" + name + ", message=" + message
+				+ ", conditions=" + conditions + "]";
+	}
+	
+
+}

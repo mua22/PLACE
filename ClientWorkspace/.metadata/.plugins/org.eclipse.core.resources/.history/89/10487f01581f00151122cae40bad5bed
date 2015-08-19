@@ -1,0 +1,43 @@
+package JSHOP2Wrapper;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
+import antlr.RecognitionException;
+import antlr.TokenStreamException;
+import JSHOP2.InternalDomain;
+
+public class JSHOP2WrapperTest {
+
+	public static void main(String[] args) {
+		String example = "blocks";
+		String folder = "F:\\epclaimcodes\\shop2\\"+example+"\\";
+		String domainFileName = folder+example;
+		String problemFileName = folder+"problem";
+		File file = new File(domainFileName);
+		System.out.println(file.getPath());
+		try {
+			InternalDomain internalDomain = new InternalDomain(new File(domainFileName), -1);			
+			internalDomain.getParser().domain();
+			InternalDomain internalDomainProblem = new InternalDomain(new File(problemFileName), 1);			
+			internalDomainProblem.getParser().command();
+			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+			File problemJavaFile = new File(folder+"problem.java");
+			System.out.println(problemJavaFile.getPath());
+			System.out.println(compiler);
+			compiler.run(null, null, null, (new File(folder+example+".java")).getPath());
+			//compiler.run(null, null, null, problemJavaFile.getPath());
+			
+			System.out.println("Done");
+			
+		} catch (IOException | RecognitionException | TokenStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+}

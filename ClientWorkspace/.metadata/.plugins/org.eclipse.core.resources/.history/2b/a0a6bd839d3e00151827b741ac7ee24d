@@ -1,0 +1,12 @@
+package epclaim.communication;
+
+public class Client extends Thread{
+	private final int SERVER_PORT = 18524;
+	public static final String SERVER_HOSTNAME = "localhost";
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		super.run();
+	}
+
+}

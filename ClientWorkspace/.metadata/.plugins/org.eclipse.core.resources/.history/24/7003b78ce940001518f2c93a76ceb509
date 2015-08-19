@@ -1,0 +1,14 @@
+package epclaim.gui;
+
+import javax.swing.JPanel;
+
+public class GraphPanel extends JPanel {
+
+	/**
+	 * Create the panel.
+	 */
+	public GraphPanel() {
+
+	}
+
+}

@@ -1,0 +1,16 @@
+package epclaim.gui;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+
+public class GraphPanel extends JPanel{
+
+	/**
+	 * Create the panel.
+	 */
+	public GraphPanel() {
+		setLayout(new BorderLayout(0, 0));
+		
+	}
+
+}

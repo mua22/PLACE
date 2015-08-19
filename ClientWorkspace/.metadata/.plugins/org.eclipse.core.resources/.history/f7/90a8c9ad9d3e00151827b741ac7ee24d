@@ -1,0 +1,23 @@
+package epclaim.communication;
+
+import java.io.*;
+import java.net.*;
+
+public class Client extends Thread{
+	private final int SERVER_PORT = 18524;
+	public static final String SERVER_HOSTNAME = "localhost";
+	@Override
+	public void run() {
+		BufferedReader in = null;
+        PrintWriter out = null;
+		Socket socket = new Socket(SERVER_HOSTNAME, SERVER_PORT);
+        in = new BufferedReader(
+            new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(
+            new OutputStreamWriter(socket.getOutputStream()));
+        System.out.println("Connected to server " +
+           SERVER_HOSTNAME + ":" + SERVER_PORT);
+		super.run();
+	}
+	
+}

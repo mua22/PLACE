@@ -1,0 +1,7 @@
+1438504994206	Change method 'loadClass'
+1438572429101	Extract method 'getAllClassFiles'
+1438654030908	Rename field 'parameters'
+1438657182512	Rename package 'epclaim.utility'
+1438808704464	Move compilation unit
+1438808725724	Rename type 'ActionMessage'
+1438913644984	Rename compilation unit 'ToStringUtils.java'

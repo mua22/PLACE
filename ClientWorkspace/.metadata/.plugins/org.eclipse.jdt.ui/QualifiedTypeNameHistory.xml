@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="epclaim.compiler.grammar.EPClaimGrammar"/>
+<fullyQualifiedTypeName name="java.io.FileReader"/>
+<fullyQualifiedTypeName name="epclaim.compiler.Agent"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="epclaim.compiler.grammar.PlaceGrammar"/>
+<fullyQualifiedTypeName name="epclaim.compiler.Environment"/>
+<fullyQualifiedTypeName name="epclaim.compiler.AgentCollection"/>
+<fullyQualifiedTypeName name="epclaim.compiler.PlaceObjectCollection"/>
+<fullyQualifiedTypeName name="epclaim.compiler.KnowledgeCollection"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="javax.swing.JDialog"/>
+</qualifiedTypeNameHistroy>
