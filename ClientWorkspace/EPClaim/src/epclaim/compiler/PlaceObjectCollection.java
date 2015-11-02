@@ -31,6 +31,9 @@ public class PlaceObjectCollection {
 	public void setAgentsCollection(AgentCollection agentsCollection) {
 		this.agentsCollection = agentsCollection;
 	}
+	public Environment getEnvironment() {
+		return environment;
+	}
 	
 	
 }

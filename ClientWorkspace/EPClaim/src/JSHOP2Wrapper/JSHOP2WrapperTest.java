@@ -18,7 +18,7 @@ import JSHOP2.Plan;
 public class JSHOP2WrapperTest {
 
 	public static void main(String[] args) {
-		String example = "basic";
+		String example = "blocks";
 		String folder = "F:\\epclaimcodes\\shop2\\"+example+"\\";
 		String domainFileName = folder+example;
 		String problemFileName = folder+"problem";

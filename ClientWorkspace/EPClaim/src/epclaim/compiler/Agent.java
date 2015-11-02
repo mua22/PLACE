@@ -1,11 +1,14 @@
 package epclaim.compiler;
 
+import java.util.ArrayList;
+
 import epclaim.utils.CommonStringUtils;
 
 public class Agent {
 	private String agentName;
 	private KnowledgeCollection knowledgeCollection;
 	private KnowledgeCollection goalCollection;
+	private Environment environment;
 	public ActionCollection getActionCollection() {
 		return actionCollection;
 	}
@@ -17,10 +20,24 @@ public class Agent {
 	private ActionCollection actionCollection;
 	private ActivityCollection activityCollection;
 	public KnowledgeCollection getKnowledgeCollection() {
-		return knowledgeCollection;
+		if(this.knowledgeCollection==null)
+			this.knowledgeCollection = new KnowledgeCollection();
+		KnowledgeCollection environmentKnowledge = this.environment.getGlobalKnowledgeCollection();
+		
+		return this.knowledgeCollection.mergeKnowledgeCollection(environmentKnowledge);
+	}
+
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
 	}
 
 	public KnowledgeCollection getGoalCollection() {
+		if(this.goalCollection==null)
+			return new KnowledgeCollection();
 		return goalCollection;
 	}
 
@@ -49,6 +66,9 @@ public class Agent {
 	public Agent(String agentName) {
 		super();
 		this.agentName = agentName;
+		this.actionCollection = new ActionCollection();
+		this.activityCollection = new ActivityCollection();
+		this.knowledgeCollection = new KnowledgeCollection();
 	}
 
 	@Override

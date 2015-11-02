@@ -104,7 +104,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(EQUAL);
       jj_consume_token(OCBRA);
       KnowledgeCollection  kb = this.getKnowledgeCollection();
-      env.setKnowledgeCollection(kb);
+      env.setGlobalKnowledgeCollection(kb);
       jj_consume_token(CCBRA);
       break;
     default:

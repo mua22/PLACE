@@ -118,7 +118,7 @@ private Environment getEnvironmentDetails(String envName) :{
     < KNOWLEDGE >< EQUAL >< OCBRA>
     {
       KnowledgeCollection  kb = this.getKnowledgeCollection();
-      env.setKnowledgeCollection(kb);    }
+      env.setGlobalKnowledgeCollection(kb);    }
     < CCBRA>  )?(< ARTIFACTS >< EQUAL>< OCBRA>  {
     env = this.addArtifact(env);  }< CCBRA>)?
   {

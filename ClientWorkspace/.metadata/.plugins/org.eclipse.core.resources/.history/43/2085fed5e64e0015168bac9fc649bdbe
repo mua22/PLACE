@@ -1,0 +1,10 @@
+package epclaim.centralsystem;
+
+public class CentralSystem {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

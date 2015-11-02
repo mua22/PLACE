@@ -20,8 +20,8 @@ public class JSHOP2Wrapper {
 	
 	public JSHOP2Wrapper() {
 		super();
-		this.classPathJSHOP = "F:\\EPClaim\\ClientWorkspace\\EPClaim\\bin";
-		
+		//this.classPathJSHOP = "F:\\EPClaim\\ClientWorkspace\\EPClaim\\bin";
+		this.classPathJSHOP = System.getProperty("user.dir")+"\\bin";
 	}
 	public Plan getPlans(String domainFile,String problemFile,String folder){
 		

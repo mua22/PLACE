@@ -15,7 +15,15 @@ public class KnowledgeCollection {
 	public boolean add(Knowledge e) {
 		return collection.add(e);
 	}
-
+	public KnowledgeCollection mergeKnowledgeCollection(KnowledgeCollection kc){
+		KnowledgeCollection tempKC = new KnowledgeCollection();
+		for(Knowledge kno:this.collection)
+			tempKC.add(kno);
+		for(Knowledge kno:kc.collection)
+			tempKC.add(kno);
+		
+		return tempKC;
+	}
 	public ArrayList<Knowledge> getCollection() {
 		return collection;
 	}
