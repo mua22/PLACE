@@ -11,102 +11,114 @@ public interface PlaceGrammarConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int OBRA = 5;
+  int OBRA = 8;
   /** RegularExpression Id. */
-  int CBRA = 6;
+  int CBRA = 9;
   /** RegularExpression Id. */
-  int OCBRA = 7;
+  int OCBRA = 10;
   /** RegularExpression Id. */
-  int CCBRA = 8;
+  int CCBRA = 11;
   /** RegularExpression Id. */
-  int PLUS = 9;
+  int PLUS = 12;
   /** RegularExpression Id. */
-  int QUESTION = 10;
+  int QUESTION = 13;
   /** RegularExpression Id. */
-  int MINUS = 11;
+  int MINUS = 14;
   /** RegularExpression Id. */
-  int MULTIPLY = 12;
+  int MULTIPLY = 15;
   /** RegularExpression Id. */
-  int DIVIDE = 13;
+  int DIVIDE = 16;
   /** RegularExpression Id. */
-  int EQUAL = 14;
+  int EQUAL = 17;
   /** RegularExpression Id. */
-  int NULL = 15;
+  int NULL = 18;
   /** RegularExpression Id. */
-  int SEMICOLON = 16;
+  int SEMICOLON = 19;
   /** RegularExpression Id. */
-  int COMMA = 17;
+  int COMMA = 20;
   /** RegularExpression Id. */
-  int DOT = 18;
+  int DOT = 21;
   /** RegularExpression Id. */
-  int AND = 19;
+  int AND = 22;
   /** RegularExpression Id. */
-  int CONSTANT = 20;
+  int OR = 23;
   /** RegularExpression Id. */
-  int DIGIT = 21;
+  int CONSTANT = 24;
   /** RegularExpression Id. */
-  int DEFINE_AGENT = 22;
+  int DIGIT = 25;
   /** RegularExpression Id. */
-  int DEFINE_ENVIRONMENT = 23;
+  int VARIABLE = 26;
   /** RegularExpression Id. */
-  int DEFINE_ARTIFACT = 24;
+  int DEFINE_AGENT = 27;
   /** RegularExpression Id. */
-  int KNOWLEDGE = 25;
+  int DEFINE_ENVIRONMENT = 28;
   /** RegularExpression Id. */
-  int GOALS = 26;
+  int DEFINE_ARTIFACT = 29;
   /** RegularExpression Id. */
-  int ARTIFACTS = 27;
+  int KNOWLEDGE = 30;
   /** RegularExpression Id. */
-  int CONNECTED_TO = 28;
+  int ADD_EFFECT = 31;
   /** RegularExpression Id. */
-  int PARENT = 29;
+  int DELETE_EFFECT = 32;
   /** RegularExpression Id. */
-  int ACTIONS = 30;
+  int GOALS = 33;
   /** RegularExpression Id. */
-  int MESSAGE = 31;
+  int ARTIFACTS = 34;
   /** RegularExpression Id. */
-  int ACTIVITIES = 32;
+  int CONNECTED_TO = 35;
   /** RegularExpression Id. */
-  int CONDITION = 33;
+  int PARENT = 36;
   /** RegularExpression Id. */
-  int HASKNOWLEDGE = 34;
+  int ACTIONS = 37;
   /** RegularExpression Id. */
-  int DO = 35;
+  int MESSAGE = 38;
   /** RegularExpression Id. */
-  int SEND = 36;
+  int ACTIVITIES = 39;
   /** RegularExpression Id. */
-  int THIS = 37;
+  int CONDITION = 40;
   /** RegularExpression Id. */
-  int TELL = 38;
+  int HASKNOWLEDGE = 41;
   /** RegularExpression Id. */
-  int CALL = 39;
+  int DO = 42;
   /** RegularExpression Id. */
-  int JAVA = 40;
+  int SEND = 43;
   /** RegularExpression Id. */
-  int NEWAGENT = 41;
+  int THIS = 44;
   /** RegularExpression Id. */
-  int KILL = 42;
+  int TELL = 45;
   /** RegularExpression Id. */
-  int IN = 43;
+  int CALL = 46;
   /** RegularExpression Id. */
-  int OUT = 44;
+  int JAVA = 47;
   /** RegularExpression Id. */
-  int MOVE = 45;
+  int NEWAGENT = 48;
   /** RegularExpression Id. */
-  int DURATION = 46;
+  int KILL = 49;
   /** RegularExpression Id. */
-  int EFFECTS = 47;
+  int IN = 50;
   /** RegularExpression Id. */
-  int REMOVEKNOWLEDGE = 48;
+  int OUT = 51;
   /** RegularExpression Id. */
-  int ORDERED = 49;
+  int MOVE = 52;
   /** RegularExpression Id. */
-  int UNORDERED = 50;
+  int DURATION = 53;
   /** RegularExpression Id. */
-  int NAME = 51;
+  int EFFECTS = 54;
+  /** RegularExpression Id. */
+  int REMOVEKNOWLEDGE = 55;
+  /** RegularExpression Id. */
+  int ORDERED = 56;
+  /** RegularExpression Id. */
+  int UNORDERED = 57;
+  /** RegularExpression Id. */
+  int AGENT_IN = 58;
+  /** RegularExpression Id. */
+  int NAME = 59;
 
   /** Lexical state. */
   int DEFAULT = 0;
+  /** Lexical state. */
+  int WithinComment = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -115,6 +127,9 @@ public interface PlaceGrammarConstants {
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
+    "\"/*\"",
+    "\"*/\"",
+    "<token of kind 7>",
     "\"(\"",
     "\")\"",
     "\"{\"",
@@ -130,12 +145,16 @@ public interface PlaceGrammarConstants {
     "\",\"",
     "\".\"",
     "\"and\"",
+    "\"or\"",
     "<CONSTANT>",
     "<DIGIT>",
+    "<VARIABLE>",
     "\"defineAgent\"",
     "\"defineEnvironment\"",
     "\"defineArtifact\"",
     "\"knowledge\"",
+    "\"addEffects\"",
+    "\"deleteEffects\"",
     "\"goals\"",
     "\"artifacts\"",
     "\"connectedTo\"",
@@ -161,6 +180,7 @@ public interface PlaceGrammarConstants {
     "\"removeKnowledge\"",
     "\"ordered\"",
     "\"unordered\"",
+    "\"agent_in\"",
     "<NAME>",
   };
 

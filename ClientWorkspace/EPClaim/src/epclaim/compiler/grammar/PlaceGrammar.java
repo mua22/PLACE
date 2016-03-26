@@ -24,6 +24,19 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       Agent agent = new Agent(token.image);
       jj_consume_token(OCBRA);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case AGENT_IN:
+        jj_consume_token(AGENT_IN);
+        jj_consume_token(EQUAL);
+        jj_consume_token(OCBRA);
+        token = jj_consume_token(NAME);
+        jj_consume_token(CCBRA);
+        agent.setAgent_in(token.image);
+        break;
+      default:
+        jj_la1[1] = jj_gen;
+        ;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case KNOWLEDGE:
         jj_consume_token(KNOWLEDGE);
         jj_consume_token(EQUAL);
@@ -33,7 +46,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         jj_consume_token(CCBRA);
         break;
       default:
-        jj_la1[1] = jj_gen;
+        jj_la1[2] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -46,7 +59,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         jj_consume_token(CCBRA);
         break;
       default:
-        jj_la1[2] = jj_gen;
+        jj_la1[3] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -59,7 +72,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         jj_consume_token(CCBRA);
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[4] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -72,7 +85,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         jj_consume_token(CCBRA);
         break;
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         ;
       }
       jj_consume_token(CCBRA);
@@ -88,7 +101,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(CCBRA);
       break;
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       ;
     }
     jj_consume_token(0);
@@ -108,7 +121,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(CCBRA);
       break;
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[7] = jj_gen;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -120,7 +133,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(CCBRA);
       break;
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[8] = jj_gen;
       ;
     }
     {if (true) return env;}
@@ -137,7 +150,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         ;
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[9] = jj_gen;
         break label_2;
       }
       token = jj_consume_token(NAME);
@@ -159,7 +172,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         ;
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         break label_3;
       }
       token = jj_consume_token(NAME);
@@ -182,28 +195,39 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(SEMICOLON);
       break;
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case CONDITION:
       jj_consume_token(CONDITION);
       jj_consume_token(EQUAL);
-                action = this.setActionConditions(action);
-      break;
-    default:
-      jj_la1[11] = jj_gen;
-      ;
-    }
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case DO:
-      jj_consume_token(DO);
-      jj_consume_token(OCBRA);
-                  action = this.setActionDo(action);
-      jj_consume_token(CCBRA);
+      //activity = (Activity)this.setActionConditions(activity);
+      action.setCondition(this.getCondition());
+      jj_consume_token(SEMICOLON);
       break;
     default:
       jj_la1[12] = jj_gen;
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ADD_EFFECT:
+      jj_consume_token(ADD_EFFECT);
+      jj_consume_token(EQUAL);
+                             action = this.getEffectsForAction(action,1);
+      break;
+    default:
+      jj_la1[13] = jj_gen;
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case DELETE_EFFECT:
+      jj_consume_token(DELETE_EFFECT);
+      jj_consume_token(EQUAL);
+                             action = this.getEffectsForAction(action,0);
+      break;
+    default:
+      jj_la1[14] = jj_gen;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -215,46 +239,79 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       action.setDuration(Integer.parseInt(token.image));
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[15] = jj_gen;
       ;
     }
     {if (true) return action;}
     throw new Error("Missing return statement in function");
   }
 
+  final private Action getEffectsForAction(Action action,int isAdd) throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NULL:
+      jj_consume_token(NULL);
+      jj_consume_token(SEMICOLON);
+      {if (true) return action;}
+      break;
+    case OCBRA:
+      jj_consume_token(OCBRA);
+                      if(isAdd==1)
+                      action.addAddEffect(this.getFunctionSignature());
+                      else action.addDeleteEffect(this.getFunctionSignature());
+      label_4:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case COMMA:
+          ;
+          break;
+        default:
+          jj_la1[16] = jj_gen;
+          break label_4;
+        }
+        jj_consume_token(COMMA);
+                      if(isAdd==1)
+                      action.addAddEffect(this.getFunctionSignature());
+                      else action.addDeleteEffect(this.getFunctionSignature());
+      }
+      jj_consume_token(CCBRA);
+                    {if (true) return action;}
+      break;
+    default:
+      jj_la1[17] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    throw new Error("Missing return statement in function");
+  }
+
   final private Activity getActivity(String actionName) throws ParseException {
   Token token;
   Activity activity = new Activity(actionName);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case MESSAGE:
-      jj_consume_token(MESSAGE);
-      jj_consume_token(EQUAL);
-  activity.setMessage(getFunctionSignature());
-      jj_consume_token(SEMICOLON);
-      break;
-    default:
-      jj_la1[14] = jj_gen;
-      ;
-    }
+    jj_consume_token(MESSAGE);
+    jj_consume_token(EQUAL);
+                  activity.setMessage(getFunctionSignature());
+    jj_consume_token(SEMICOLON);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case CONDITION:
       jj_consume_token(CONDITION);
       jj_consume_token(EQUAL);
-      activity = (Activity)this.setActionConditions(activity);
+      //activity = (Activity)this.setActionConditions(activity);
+      activity.setCondition(this.getCondition());
+      jj_consume_token(SEMICOLON);
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[18] = jj_gen;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case DO:
       jj_consume_token(DO);
       jj_consume_token(OCBRA);
-                  activity = (Activity)this.setActionDo(activity);
+                  activity = this.setActivityDo(activity);
       jj_consume_token(CCBRA);
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[19] = jj_gen;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -264,8 +321,36 @@ public class PlaceGrammar implements PlaceGrammarConstants {
                   activity = (Activity)this.setActionConditions(activity);
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[20] = jj_gen;
       ;
+    }
+    {if (true) return activity;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final private Activity setActivityDo(Activity activity) throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case UNORDERED:
+      jj_consume_token(UNORDERED);
+      activity.setOrdered(false);
+      break;
+    default:
+      jj_la1[21] = jj_gen;
+      ;
+    }
+    label_5:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case OBRA:
+        ;
+        break;
+      default:
+        jj_la1[22] = jj_gen;
+        break label_5;
+      }
+      jj_consume_token(OBRA);
+      activity.addDoCall(this.getFunctionSignature());
+      jj_consume_token(CBRA);
     }
     {if (true) return activity;}
     throw new Error("Missing return statement in function");
@@ -278,15 +363,15 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(OBRA);
         action = this.setActionDoElement(action);
         action.setActionType(ActionType.UNORDERED);
-      label_4:
+      label_6:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case DOT:
           ;
           break;
         default:
-          jj_la1[18] = jj_gen;
-          break label_4;
+          jj_la1[23] = jj_gen;
+          break label_6;
         }
         jj_consume_token(DOT);
         action = this.setActionDoElement(action);
@@ -295,17 +380,17 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(CBRA);
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[25] = jj_gen;
         action = this.setActionDoElement(action);
-      label_5:
+      label_7:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case DOT:
           ;
           break;
         default:
-          jj_la1[19] = jj_gen;
-          break label_5;
+          jj_la1[24] = jj_gen;
+          break label_7;
         }
         jj_consume_token(DOT);
         action = this.setActionDoElement(action);
@@ -326,8 +411,6 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       case REMOVEKNOWLEDGE:
         jj_consume_token(REMOVEKNOWLEDGE);
         jj_consume_token(OBRA);
-                  action.addTask(new RemoveKnowledge(this.getFunctionSignature()));
-                  //action.setRemoveKnowledge(this.getFunctionSignature());
 
         jj_consume_token(CBRA);
         break;
@@ -343,7 +426,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
           token = jj_consume_token(NAME);
           break;
         default:
-          jj_la1[21] = jj_gen;
+          jj_la1[26] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -352,7 +435,8 @@ public class PlaceGrammar implements PlaceGrammarConstants {
 
                    sendTask = new Send(null,MessageType.TELL,token.image);
                    sendTask = this.getSendTask(sendTask);
-                  action.addTask(sendTask);
+                  //action.addTask(sendTask);
+
         jj_consume_token(CBRA);
         break;
       case NEWAGENT:
@@ -361,16 +445,16 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         jj_consume_token(QUESTION);
         token = jj_consume_token(NAME);
         jj_consume_token(CBRA);
-                  action.addTask(new NewAgent(token.image));
+
         break;
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[27] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[28] = jj_gen;
       ;
     }
     {if (true) return action;}
@@ -387,7 +471,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(CBRA);
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[29] = jj_gen;
         st.setType(MessageType.OTHER);
         st.setFunctionSignature(this.getFunctionSignature());
     }
@@ -398,32 +482,64 @@ public class PlaceGrammar implements PlaceGrammarConstants {
   final private FunctionSignature getFunctionSignature() throws ParseException {
   FunctionSignature fs = new FunctionSignature();
   Token token;
-    token = jj_consume_token(NAME);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NAME:
+      token = jj_consume_token(NAME);
+      break;
+    case AGENT_IN:
+      token = jj_consume_token(AGENT_IN);
+      break;
+    default:
+      jj_la1[30] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
     jj_consume_token(OBRA);
                   fs.setName(token.image);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case QUESTION:
-      jj_consume_token(QUESTION);
-      token = jj_consume_token(NAME);
+    case VARIABLE:
+    case NAME:
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case VARIABLE:
+        token = jj_consume_token(VARIABLE);
+        break;
+      case NAME:
+        token = jj_consume_token(NAME);
+        break;
+      default:
+        jj_la1[31] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
                       fs.addVariable(token.image);
-      label_6:
+      label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[25] = jj_gen;
-          break label_6;
+          jj_la1[32] = jj_gen;
+          break label_8;
         }
         jj_consume_token(COMMA);
-        jj_consume_token(QUESTION);
-        token = jj_consume_token(NAME);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case VARIABLE:
+          token = jj_consume_token(VARIABLE);
+          break;
+        case NAME:
+          token = jj_consume_token(NAME);
+          break;
+        default:
+          jj_la1[33] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
                       fs.addVariable(token.image);
       }
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[34] = jj_gen;
       ;
     }
     jj_consume_token(CBRA);
@@ -441,7 +557,81 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final private Action setActionConditions(Action action) throws ParseException {
+  final private Condition getCondition() throws ParseException {
+  Condition condition = new Condition();
+  Token token;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case NULL:
+      jj_consume_token(NULL);
+      break;
+    case HASKNOWLEDGE:
+      jj_consume_token(HASKNOWLEDGE);
+      jj_consume_token(OBRA);
+          condition.addCondition(this.getFunctionSignature());
+      jj_consume_token(CBRA);
+      break;
+    case OBRA:
+      jj_consume_token(OBRA);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case AND:
+        token = jj_consume_token(AND);
+        break;
+      case OR:
+        token = jj_consume_token(OR);
+        break;
+      default:
+        jj_la1[35] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      jj_consume_token(OBRA);
+          if(token.image=="and")
+          condition.setAndType();
+                else condition.setOrType();
+          condition.addChildCondition(this.getCondition());
+      label_9:
+      while (true) {
+        jj_consume_token(COMMA);
+          condition.addChildCondition(this.getCondition());
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case COMMA:
+          ;
+          break;
+        default:
+          jj_la1[36] = jj_gen;
+          break label_9;
+        }
+      }
+      jj_consume_token(CBRA);
+      jj_consume_token(CBRA);
+      break;
+    default:
+      jj_la1[37] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+          {if (true) return condition;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final private Condition getAndhasCondition() throws ParseException {
+  Condition condition = new Condition();
+    condition.addChildCondition(this.getHasKnowledgeCondition());
+  {if (true) return condition;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final private Condition getHasKnowledgeCondition() throws ParseException {
+  Condition condition = new Condition();
+    jj_consume_token(HASKNOWLEDGE);
+    jj_consume_token(OBRA);
+      condition.addCondition(this.getFunctionSignature());
+    jj_consume_token(CBRA);
+      {if (true) return condition;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final private Capability setActionConditions(Capability action) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case HASKNOWLEDGE:
       jj_consume_token(HASKNOWLEDGE);
@@ -455,23 +645,22 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(OBRA);
       jj_consume_token(HASKNOWLEDGE);
       jj_consume_token(OBRA);
-                            action.setConditionLogic(ConditionLogic.AND);
-                                action.addCondition(this.getFunctionSignature());
+
       jj_consume_token(CBRA);
-      label_7:
+      label_10:
       while (true) {
         jj_consume_token(COMMA);
         jj_consume_token(HASKNOWLEDGE);
         jj_consume_token(OBRA);
-                                action.addCondition(this.getFunctionSignature());
+
         jj_consume_token(CBRA);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[27] = jj_gen;
-          break label_7;
+          jj_la1[38] = jj_gen;
+          break label_10;
         }
       }
       jj_consume_token(CBRA);
@@ -482,7 +671,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(SEMICOLON);
       break;
     default:
-      jj_la1[28] = jj_gen;
+      jj_la1[39] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -493,15 +682,15 @@ public class PlaceGrammar implements PlaceGrammarConstants {
   final private KnowledgeCollection getKnowledgeCollection() throws ParseException {
   KnowledgeCollection knowledgeCollection = new KnowledgeCollection();
   Token token;
-    label_8:
+    label_11:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case NAME:
         ;
         break;
       default:
-        jj_la1[29] = jj_gen;
-        break label_8;
+        jj_la1[40] = jj_gen;
+        break label_11;
       }
       token = jj_consume_token(NAME);
       jj_consume_token(OBRA);
@@ -520,15 +709,15 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     case NAME:
       token = jj_consume_token(NAME);
       knowledge.addParameter(token.image);
-      label_9:
+      label_12:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[30] = jj_gen;
-          break label_9;
+          jj_la1[41] = jj_gen;
+          break label_12;
         }
         jj_consume_token(COMMA);
         token = jj_consume_token(NAME);
@@ -536,7 +725,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       }
       break;
     default:
-      jj_la1[31] = jj_gen;
+      jj_la1[42] = jj_gen;
       ;
     }
     {if (true) return knowledge;}
@@ -545,15 +734,15 @@ public class PlaceGrammar implements PlaceGrammarConstants {
 
   final private Environment addArtifact(Environment env) throws ParseException {
   Token token;
-    label_10:
+    label_13:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case DEFINE_ARTIFACT:
         ;
         break;
       default:
-        jj_la1[32] = jj_gen;
-        break label_10;
+        jj_la1[43] = jj_gen;
+        break label_13;
       }
       jj_consume_token(DEFINE_ARTIFACT);
       token = jj_consume_token(NAME);
@@ -587,19 +776,19 @@ public class PlaceGrammar implements PlaceGrammarConstants {
             parent = token.image;
           break;
         default:
-          jj_la1[33] = jj_gen;
+          jj_la1[44] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[34] = jj_gen;
+        jj_la1[45] = jj_gen;
         ;
       }
       jj_consume_token(CCBRA);
       break;
     default:
-      jj_la1[35] = jj_gen;
+      jj_la1[46] = jj_gen;
       ;
     }
           {if (true) return parent;}
@@ -624,15 +813,15 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         case NAME:
           token = jj_consume_token(NAME);
             connections.add(token.image);
-          label_11:
+          label_14:
           while (true) {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
             case COMMA:
               ;
               break;
             default:
-              jj_la1[36] = jj_gen;
-              break label_11;
+              jj_la1[47] = jj_gen;
+              break label_14;
             }
             jj_consume_token(COMMA);
             token = jj_consume_token(NAME);
@@ -640,19 +829,19 @@ public class PlaceGrammar implements PlaceGrammarConstants {
           }
           break;
         default:
-          jj_la1[37] = jj_gen;
+          jj_la1[48] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[38] = jj_gen;
+        jj_la1[49] = jj_gen;
         ;
       }
       jj_consume_token(CCBRA);
       break;
     default:
-      jj_la1[39] = jj_gen;
+      jj_la1[50] = jj_gen;
       ;
     }
           {if (true) return connections;}
@@ -668,7 +857,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[40];
+  final private int[] jj_la1 = new int[51];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -676,10 +865,10 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x400000,0x2000000,0x4000000,0x40000000,0x0,0x800000,0x2000000,0x8000000,0x0,0x0,0x80000000,0x0,0x0,0x0,0x80000000,0x0,0x0,0x0,0x40000,0x40000,0x0,0x400,0x0,0x0,0x0,0x20000,0x400,0x20000,0x88000,0x0,0x20000,0x0,0x1000000,0x8000,0x8000,0x20000000,0x20000,0x8000,0x8000,0x10000000,};
+      jj_la1_0 = new int[] {0x8000000,0x0,0x40000000,0x0,0x0,0x0,0x10000000,0x40000000,0x0,0x0,0x0,0x0,0x0,0x80000000,0x0,0x0,0x100000,0x40400,0x0,0x0,0x0,0x0,0x100,0x200000,0x200000,0x0,0x2000,0x0,0x0,0x0,0x0,0x4000000,0x100000,0x4000000,0x4000000,0xc00000,0x100000,0x40100,0x100000,0x440000,0x0,0x100000,0x0,0x20000000,0x40000,0x40000,0x0,0x100000,0x40000,0x40000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x80000,0x80000,0x0,0x2,0x8,0x4000,0x0,0x2,0x8,0x8000,0x0,0x0,0x40000,0x20,0x10210,0x10210,0x40,0x0,0x0,0x0,0x4,0x80000,0x0,0x80000,0x0,0x80000,0x80000,0x0,0x0,0x80000,0x80000,0x0,};
+      jj_la1_1 = new int[] {0x0,0x4000000,0x0,0x2,0x20,0x80,0x0,0x0,0x4,0x8000000,0x8000000,0x40,0x100,0x0,0x1,0x200000,0x0,0x0,0x100,0x400,0x400000,0x2000000,0x0,0x0,0x0,0x2000000,0x1000,0x810800,0x810800,0x2000,0xc000000,0x8000000,0x0,0x8000000,0x8000000,0x0,0x0,0x200,0x0,0x200,0x8000000,0x0,0x8000000,0x0,0x8000000,0x8000000,0x10,0x0,0x8000000,0x8000000,0x8,};
    }
 
   /** Constructor with InputStream. */
@@ -693,7 +882,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 40; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -707,7 +896,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 40; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -717,7 +906,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 40; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -727,7 +916,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 40; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -736,7 +925,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 40; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -745,7 +934,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 40; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -796,12 +985,12 @@ public class PlaceGrammar implements PlaceGrammarConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[52];
+    boolean[] la1tokens = new boolean[60];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 51; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -813,7 +1002,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         }
       }
     }
-    for (int i = 0; i < 52; i++) {
+    for (int i = 0; i < 60; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

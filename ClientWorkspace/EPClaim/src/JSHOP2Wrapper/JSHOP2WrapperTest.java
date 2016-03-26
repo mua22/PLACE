@@ -17,13 +17,19 @@ import JSHOP2.Plan;
 
 public class JSHOP2WrapperTest {
 
+	/**
+	 * Demonstrates the Use of JSHOP2 Wrapper Class
+	 * Plz comb the code to see its working
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		String example = "blocks";
+		String example = "analyzer";
 		String folder = "F:\\epclaimcodes\\shop2\\"+example+"\\";
 		String domainFileName = folder+example;
 		String problemFileName = folder+"problem";
 		File file = new File(domainFileName);
-		System.out.println(file.getPath());
+		//System.out.println("Domain File: "+file.getPath());
+		//System.out.println("Problem File: "+problemFileName);
 		try {
 			InternalDomain internalDomain = new InternalDomain(new File(domainFileName), -1);			
 			internalDomain.getParser().domain();

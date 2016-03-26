@@ -1,0 +1,124 @@
+;;; Domain Representation for the agent:AnalyzerAgent
+
+(defdomain AnalyzerAgent	(
+
+		(:method (analyze_cell  ?c)
+		()
+		((moveto_cell ?c)(complete_analysis ?c)(!OP_callCentral ?c))
+		)
+
+		(:method (complete_analysis  ?c)
+		((agent_in ?c))
+		(:unordered (!OP_patrolTheCell ?c)(!OP_captureVideo ?c)(OP_writeReport ?c))
+		)
+
+		(:method (moveto_cell  ?c)
+		((agent_in ?c))
+		()
+		)
+
+		(:method (moveto_cell1  ?c)
+		((and(agent_in ?c)(connected ?c ?d)(allowed ?b ?c)(doorBetween ?c ?b ?d)(closed ?d)))
+		((getKey ?d)(!OP_forbid ?c ?b)(moveto_cell ?b)(openDoor ?d)(OP_move ?b ?c))
+		)
+
+		(:method (moveto_cell1  ?c)
+		((and(agent_in ?c)(connected ?c ?d)(allowed ?b ?c)(doorBetween ?b ?c ?d)(closed ?d)))
+		((getKey ?d)(!OP_forbid ?c ?b)(moveto_cell ?b)(openDoor ?d)(OP_move ?b ?c))
+		)
+
+		(:method (moveto_cell1  ?c)
+		((and(agent_in ?b)(or(connected ?b ?c)(connected ?c ?b))(or(doorBetween ?b ?c ?d)(doorBetween ?c ?b ?d))(closed ?d)))
+		((getKey ?d)(!OP_forbid ?c ?b)(moveto_cell ?b)(openDoor ?d)(OP_move ?b ?c))
+		)
+
+		(:method (moveto_cell1  ?c)
+		((and(agent_in ?b)(or(connected ?b ?c)(connected ?c ?b))))
+		((getKey ?d)(!OP_forbid ?c ?b)(moveto_cell ?b)(openDoor ?d)(OP_move ?b ?c))
+		)
+
+		(:method (moveto_cell1  ?c)
+		((and(agent_in ?a)(connected ?b ?c)(allowed ?b ?c)))
+		((!OP_forbid ?c ?b)(moveto_cell ?b)(OP_move ?b ?c))
+		)
+
+		(:method (moveto_cell1  ?c)
+		((and(agent_in ?a)(connected ?c ?b)(allowed ?b ?c)))
+		((!OP_forbid ?c ?b)(moveto_cell ?b)(OP_move ?b ?c))
+		)
+
+		(:method (getKey  ?d)
+		((hasKey ?d))
+		()
+		)
+
+		(:method (getKey  ?d)
+		((keyPlaced ?d ?c))
+		((moveto_cell ?c)(allow_all )(!OP_getKey ?d ?c))
+		)
+
+		(:method (openDoor  ?d)
+		((opened ?d))
+		()
+		)
+
+		(:method (openDoor  ?d)
+		((and(agent_in ?b)(or(connected ?b ?c)(connected ?c ?b))(or(doorBetween ?b ?c ?d)(doorBetween ?c ?b ?d))(closed ?d)(hasKey ?d)))
+		((!OP_openDoor ?d))
+		)
+
+		(:method (allow_all 
+		()
+		((!OP_allow ?a1 ?a2)(!OP_allow ?a2 ?a3)(!OP_allow ?b1 ?b2)(!OP_allow ?b2 ?b3)(!OP_allow ?b3 ?b4)(!OP_allow ?b4 ?b5)(!OP_allow ?c1 ?c2)(!OP_allow ?c2 ?c3)(!OP_allow ?a1 ?b1)(!OP_allow ?a1 ?b2)(!OP_allow ?c2 ?c3)(!OP_allow ?a1 ?b1)(!OP_allow ?a1 ?b2)(!OP_allow ?a2 ?b1)(!OP_allow ?a2 ?b2)(!OP_allow ?a2 ?b3)(!OP_allow ?a3 ?b2)(!OP_allow ?a3 ?b3)(!OP_allow ?a3 ?b4)(!OP_allow ?b1 ?c1)(!OP_allow ?b1 ?c2)(!OP_allow ?b2 ?c1)(!OP_allow ?b2 ?c2)(!OP_allow ?b2 ?c3)(!OP_allow ?b3 ?c2)(!OP_allow ?b3 ?c3)(!OP_allow ?b4 ?c3)(!OP_allow ?a2 ?a1)(!OP_allow ?a3 ?a2)(!OP_allow ?b2 ?b1)(!OP_allow ?b3 ?b2)(!OP_allow ?b4 ?b3)(!OP_allow ?b5 ?b4)(!OP_allow ?c2 ?c1)(!OP_allow ?c3 ?c2)(!OP_allow ?b1 ?a1)(!OP_allow ?b2 ?a1)(!OP_allow ?b1 ?a2)(!OP_allow ?b2 ?a2)(!OP_allow ?b3 ?a2)(!OP_allow ?b2 ?a3)(!OP_allow ?b3 ?a3)(!OP_allow ?b4 ?a3)(!OP_allow ?c1 ?b1)(!OP_allow ?c2 ?b1)(!OP_allow ?c1 ?b2)(!OP_allow ?c2 ?b2)(!OP_allow ?c3 ?b2)(!OP_allow ?c2 ?b3)(!OP_allow ?c3 ?b3)(!OP_allow ?c3 ?b4))
+		)
+
+		(:operator (!Op_move  ?a ?b)
+		((agent_in ?a)) ;;PreConditions
+		((agent_in  ?a)) ;;Delete Effects
+		((agent_in  ?b)) ;;Add Effects
+		)
+
+		(:operator (!OP_forbid  ?a ?b)
+		((allowed ?a ?b)) ;;PreConditions
+		((allowed  ?a ?b)) ;;Delete Effects
+		() ;;Add Effects
+		)
+
+		(:operator (!OP_getKey  ?d ?c)
+		((and(agent_in ?c)(keyPlaced ?d ?c))) ;;PreConditions
+		((hasKey  ?d)) ;;Delete Effects
+		((keyPlaced  ?d ?c)) ;;Add Effects
+		)
+
+		(:operator (!OP_openDoor  ?d)
+		((and(agent_in ?b)(or(connected ?b ?c)(connected ?b ?c))(or(doorBetween ?c ?b ?d)(doorBetween ?b ?c ?d))(closed ?d)(hasKey ?d))) ;;PreConditions
+		((closed  ?d)) ;;Delete Effects
+		((opened  ?d)) ;;Add Effects
+		)
+
+		(:operator (!OP_allow  ?a ?b)
+		() ;;PreConditions
+		() ;;Delete Effects
+		((allowed  ?a ?b)) ;;Add Effects
+		)
+
+		(:operator (!OP_callCentral  ?c)
+		((and(hasMobile )(capturedVideo ?c)(writtenReport ?c)(patrolled ?c))) ;;PreConditions
+		() ;;Delete Effects
+		((called  ?c)) ;;Add Effects
+		)
+
+		(:operator (!OP_patrolTheCell  ?a ?b)
+		((agent_in ?c)) ;;PreConditions
+		() ;;Delete Effects
+		((patrolled  ?c)) ;;Add Effects
+		)
+
+		(:operator (!OP_captureVideo  ?c)
+		((agent_in ?c)) ;;PreConditions
+		() ;;Delete Effects
+		((capturedVideo  ?c)) ;;Add Effects
+		)
+	)
+
+)

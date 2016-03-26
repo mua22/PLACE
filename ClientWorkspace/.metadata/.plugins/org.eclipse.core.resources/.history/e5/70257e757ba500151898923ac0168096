@@ -1,0 +1,26 @@
+
+public class Sorting {
+	public static int[] arrOf = {2,8,3,6,1};
+ public static void main(String args[]){
+	 printarr();
+	 for(int j=0;j<4;j++){		 
+	 
+		 for(int i=0;i<4;++i){
+			 printarr();
+			 if(arrOf[i]>arrOf[i+1]){
+				 System.out.println("Swapping "+arrOf[i]+" "+arrOf[i+1]);
+				 int temp = arrOf[i+1];
+				 arrOf[i+1] = arrOf[i];
+				 arrOf[i] = temp;
+				 
+			 }
+		 } printarr();
+		 }printarr();
+ }
+ public static void printarr(){
+	 String str = "";
+	 for(int i=0;i<5;i++)
+		 str+=arrOf[i] + " ";
+	 System.out.println(str);
+ }
+}

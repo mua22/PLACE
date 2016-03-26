@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/Sapa/src/edu/asu/sapa/Planner.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="edu.asu.sapa.Planner"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="F:\sapa\examples\depots\DepotsSimpleTime.pddl&#13;&#10;F:\sapa\examples\depots\pfile2.pddl"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Sapa"/>
+</launchConfiguration>

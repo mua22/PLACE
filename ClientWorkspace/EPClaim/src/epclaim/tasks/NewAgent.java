@@ -3,7 +3,7 @@ package epclaim.tasks;
 import epclaim.compiler.Agent;
 import epclaim.compiler.FunctionSignature;
 
-public class NewAgent extends PremitiveTask {
+public class NewAgent extends PrimitiveTask {
 
 	public NewAgent(String agentName) {
 		super(null);

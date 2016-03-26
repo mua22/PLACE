@@ -1,0 +1,22 @@
+/**
+ * JSHOP2Wrapper
+ * 
+ */
+package JSHOP2Wrapper;
+
+import epclaim.compiler.Agent;
+import epclaim.planner.IPlanner;
+
+/**
+ * @author Usman
+ * JSHop2 Planner Class Implementing the IPlanner Interface
+ */
+public class JShop2Planner implements IPlanner{
+
+	@Override
+	public void getPlan(Agent agent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

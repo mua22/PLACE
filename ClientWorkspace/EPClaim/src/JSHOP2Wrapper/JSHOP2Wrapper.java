@@ -37,14 +37,15 @@ public class JSHOP2Wrapper {
 			internalDomainProblem.getParser().command();
 			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 			File problemJavaFile = new File(folder+"problem.java");
-			System.out.println(problemJavaFile.getPath());
-			System.out.println("Compiler Status: "+compiler);
+			//System.out.println(problemJavaFile.getPath());
+			//System.out.println("Compiler Status: "+compiler);
 			String classPath = folder+";"+this.classPathJSHOP;
-			System.out.println("Class Path: "+ classPath);
+			//System.out.println("Class Path: "+ classPath);
+			System.out.println("Running JSHop2 to Create Java Files ");
 			compiler.run(null, null, null, (new File(folder+domainFile+".java")).getPath());
 			compiler.run(null, null, null, "-classpath",classPath,"-sourcepath",folder,problemJavaFile.getPath());
 			
-			System.out.println("Done Compilation!");
+			System.out.println("Java Files Created and Compiled");
 			
 		} catch (IOException | RecognitionException | TokenStreamException e) {
 			// TODO Auto-generated catch block
@@ -70,10 +71,15 @@ public class JSHOP2Wrapper {
 			
 			//Class<?> problem = problemClassLoader.loadClass("problem",folder);
 			Method method = problem.getMethod("getPlans", null);
+			System.out.println("Invoking JSHOP2 planner");
 			LinkedList<Plan> plans =(LinkedList<Plan>) method.invoke(null, null);
 			//System.out.println("aClass.getName() = " + problem.getName());
 			//System.out.println("Plans: "+ plans);
+			System.out.println("JSHOP2 planner Invoked");
+			//this.cleanFolder(domainFile,problemFile,folder);
+			if(plans.size()>0)
 			return plans.get(0);
+			else return null;
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -116,7 +122,7 @@ public class JSHOP2Wrapper {
 		JSHOP2Wrapper jshopWrapper = new JSHOP2Wrapper();
 		Plan plan = jshopWrapper.getPlans(domainFile, "problem", folder);
 		System.out.println(plan);
-		//jshopWrapper.cleanFolder(domainFile, "problem", folder);
+		jshopWrapper.cleanFolder(domainFile, "problem", folder);
 	}
 	public void cleanFolder(String domainFile,String problemFile,String folder){
 		File fileToDelete = new File(folder+domainFile+".java");

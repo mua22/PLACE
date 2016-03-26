@@ -1,0 +1,30 @@
+/**
+ * JSHOP2Wrapper
+ * 
+ */
+package JSHOP2Wrapper;
+
+import epclaim.compiler.Agent;
+import epclaim.planner.IPlanner;
+import epclaim.utils.FileUtility;
+
+/**
+ * @author Usman
+ * JSHop2 Planner Class Implementing the IPlanner Interface
+ */
+public class JShop2Planner implements IPlanner{
+
+	@Override
+	public void getPlan(Agent agent) {
+		//URL location = Test.class.getProtectionDomain().getCodeSource().getLocation();
+        System.out.println(System.getProperty("user.dir"));
+        String workingDirectory = System.getProperty("user.dir")+"\\JSHOP2PlannerWorkingDirectory";
+        FileUtility.createDire(workingDirectory);
+		// TODO Auto-generated method stub
+		//System.out.println(agent.getKnowledgeCollection());
+		//JSHOP2Translator translator = new JSHOP2Translator(agent,folder);
+		//translator.translate();
+		//System.out.println(agent.getName()+" Translated...");
+	}
+
+}

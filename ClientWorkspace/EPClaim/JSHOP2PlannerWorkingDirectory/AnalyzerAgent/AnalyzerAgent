@@ -1,0 +1,23 @@
+;;; Domain Representation for the agent:AnalyzerAgent
+
+(defdomain AnalyzerAgent	(
+
+		(:method (watch  ?c)
+		()
+		((!OP_watchTV ?c))
+		)
+
+		(:operator (!OP_move  ?a ?b)
+		((agent_in ?a)) ;;PreConditions
+		((agent_in  ?a)) ;;Delete Effects
+		((agent_in  ?b)) ;;Add Effects
+		)
+
+		(:operator (!OP_watchTV  ?c)
+		((agent_in ?c)) ;;PreConditions
+		() ;;Delete Effects
+		() ;;Add Effects
+		)
+	)
+
+)

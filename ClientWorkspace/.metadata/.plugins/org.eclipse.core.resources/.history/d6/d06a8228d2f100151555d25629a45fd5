@@ -1,0 +1,107 @@
+/**
+ * epclaim.gui
+ * 
+ */
+package epclaim.gui;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JToolBar;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.io.File;
+
+import javax.swing.JTextArea;
+import javax.swing.DropMode;
+
+import epclaim.utils.EpclaimPrefrences;
+
+/**
+ * @author Usman
+ *
+ */
+public class PLACEGUI {
+	private File file;
+	private JFrame frame;
+	private JLabel lblSelectedFile;
+	private EpclaimPrefrences prefs = new EpclaimPrefrences();
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					PLACEGUI window = new PLACEGUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public PLACEGUI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JPanel panelTop = new JPanel();
+		frame.getContentPane().add(panelTop, BorderLayout.NORTH);
+		
+		JButton btnSelectFile = new JButton("Select File");
+		btnSelectFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setCurrentDirectory(new File(prefs.getDefaultFolder()));
+		        int returnValue = fileChooser.showOpenDialog(null);
+		        if (returnValue == JFileChooser.APPROVE_OPTION) {
+		        	PLACEGUI.this.file = fileChooser.getSelectedFile();
+		        	PLACEGUI.this.getLblSelectedFile().setText(PLACEGUI.this.file.getPath());
+		        	prefs.setDefaultFolder(file.getParent());
+		          //System.out.println(file.getPath());
+		        }
+			}
+		});
+		panelTop.add(btnSelectFile);
+		
+		JButton btnCompileRun = new JButton("Compile & Run");
+		panelTop.add(btnCompileRun);
+		
+		lblSelectedFile = new JLabel("Selected File");
+		panelTop.add(lblSelectedFile);
+		
+		JPanel panel = new JPanel();
+		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		
+		JPanel panel_south= new JPanel();
+		frame.getContentPane().add(panel_south, BorderLayout.SOUTH);
+		
+		JTextArea txtrStatus = new JTextArea();
+		txtrStatus.setText("Status");
+		panel_south.add(txtrStatus);
+	}
+
+	public JLabel getLblSelectedFile() {
+		return lblSelectedFile;
+	}
+}

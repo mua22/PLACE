@@ -1,0 +1,6 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */options{  static = true;}PARSER_BEGIN(PlanStringConverter)package JSHOP2Wrapper.planStringConverter;
+
+public class PlanStringConverter{  public static void main(String args []) throws ParseException  {    PlanStringConverter parser = new PlanStringConverter(System.in);
+        }}PARSER_END(PlanStringConverter)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}

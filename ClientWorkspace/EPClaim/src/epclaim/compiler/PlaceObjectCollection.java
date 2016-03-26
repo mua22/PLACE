@@ -7,7 +7,8 @@ public class PlaceObjectCollection {
 			AgentCollection agentsCollection) {
 		super();
 		this.environment = environment;
-		this.agentsCollection = agentsCollection;
+		this.setAgentsCollection(agentsCollection);
+		
 	}
 	@Override
 	public String toString() {
@@ -30,6 +31,7 @@ public class PlaceObjectCollection {
 	}
 	public void setAgentsCollection(AgentCollection agentsCollection) {
 		this.agentsCollection = agentsCollection;
+		this.environment.setAgentsCollection(this.agentsCollection);
 	}
 	public Environment getEnvironment() {
 		return environment;

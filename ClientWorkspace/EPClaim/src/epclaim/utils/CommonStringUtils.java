@@ -15,6 +15,14 @@ public class CommonStringUtils {
 	public static String tabs(int n){
 		return CommonStringUtils.repeat("\t", n);
 	}
+	public static String incrementedTabs(int n){
+		CommonStringUtils.tabCount++;
+		return CommonStringUtils.repeat("\t", n);
+	}
+	public static String decrementedTabs(int n){
+		CommonStringUtils.tabCount--;
+		return CommonStringUtils.repeat("\t", n);
+	}
 	public static String CurlyBraceClose(boolean newline){
 		if(newline)
 			return "\n"+CommonStringUtils.repeat("\t", --tabCount)+"}";

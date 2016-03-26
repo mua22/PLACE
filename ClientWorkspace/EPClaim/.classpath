@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="E:/Shop2/JSHOP2GUI_1.0.1/JSHOP2GUI_1.0.1/antlr.jar"/>
 	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="lib" path="F:/EPClaim/Graph Libraries/jgraphx-master/lib/jgraphx.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Sapa"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

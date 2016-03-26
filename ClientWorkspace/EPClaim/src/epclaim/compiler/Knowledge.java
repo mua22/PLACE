@@ -15,6 +15,11 @@ public class Knowledge {
 		
 	}
 
+	public Knowledge(String statement, ArrayList<String> parameters) {
+		this(statement);
+		this.parameters = parameters;
+	}
+
 	public ArrayList<String> getParameters() {
 		return parameters;
 	}

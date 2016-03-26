@@ -10,7 +10,7 @@ import epclaim.compiler.FunctionSignature;
  * @author Usman
  *
  */
-public class RemoveKnowledge extends PremitiveTask {
+public class RemoveKnowledge extends PrimitiveTask {
 
 	/* (non-Javadoc)
 	 * @see epclaim.tasks.PremitiveTask#perform(epclaim.compiler.Agent)

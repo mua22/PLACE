@@ -1,0 +1,15 @@
+8
+r2
+agent_in
+tv_placed
+off
+tv_status
+on
+tv
+watching
+1
+watch
+3
+!op_watchtv
+!op_move
+!op_turnontv

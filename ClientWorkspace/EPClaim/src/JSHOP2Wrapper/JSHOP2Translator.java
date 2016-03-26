@@ -3,6 +3,7 @@ package JSHOP2Wrapper;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -10,15 +11,30 @@ import java.io.Writer;
 import java.util.ArrayList;
 
 import epclaim.compiler.*;
+import epclaim.compiler.grammar.ParseException;
+import epclaim.compiler.grammar.PlaceGrammar;
 import epclaim.utils.CommonStringUtils;
 import epclaim.utils.FileUtility;
 
+/**
+ * This class is responsible of translating the Agent problem to JSHOP2 problem and domain file
+ * @author Usman
+ * 
+ */
+/**
+ * @author Usman
+ *
+ */
 public class JSHOP2Translator {
 	private int tab;
 	private String folder;
 	private Agent agent;
 	private String domainStr;
 	private String problemStr;
+	/**
+	 * @param agent The agent Object to be translated
+	 * @param folder The folder in which to create the problem and domain files
+	 */
 	public JSHOP2Translator(Agent agent,String folder) {
 		super();
 		this.agent = agent;
@@ -27,35 +43,50 @@ public class JSHOP2Translator {
 		domainStr = ";;; Domain Representation for the agent:"+agent.getName()+"\n\n";
 		problemStr=";;; Problem Representation for the agent:"+agent.getName()+"\n\n";;
 	}
+	
+	
+	/**
+	 * Translates the Agent problem into domain file and problem file
+	 */
 	public void translate(){
 		this.translateDomain();
 		this.translateProblem();
 		this.write();
 	}
-	public void translateProblem(){
-		problemStr+= "(defproblem problem "+agent.getName()+"Agent\n"
+	/**
+	 * Creates the problem file
+	 */
+	private void translateProblem(){
+		problemStr+= "(defproblem problem "+agent.getName()+"\n"
 				+CommonStringUtils.tabs(tab++)+"(\n"// knowledge start
 				+this.translateKnowledgeCollection(agent.getKnowledgeCollection())
 				//+this.translateKnowledgeCollection(agent.getKnowledgeCollection())
 				//+this.translateKnowledgeCollection(agent.getKnowledgeCollection())
 				+ CommonStringUtils.tabs(--tab)+")\n" // knowledge end
 				+CommonStringUtils.tabs(tab++)+"(\n"
-				+CommonStringUtils.tabs(tab++)+"(achieve-goals\n"
+				//+CommonStringUtils.tabs(tab++)+"(achieve-goals\n"
 				+CommonStringUtils.tabs(tab++)+"(\n"
 				+this.translateKnowledgeCollection(agent.getGoalCollection())
-				+ CommonStringUtils.tabs(--tab)+")\n"
+				//+ CommonStringUtils.tabs(--tab)+")\n"
 				+ CommonStringUtils.tabs(--tab)+")\n"
 				+ CommonStringUtils.tabs(--tab)+")\n"
 				+"\n)";
 	}
-	public void translateDomain(){
+	/**
+	 * Creates the Domain File
+	 */
+	private void translateDomain(){
 		domainStr+= "(defdomain "+agent.getName()
 				+CommonStringUtils.tabs(tab++)+"(\n"// knowledge start
-				+this.translateActionCollection(agent.getActionCollection())
+				//+this.translateActionCollection(Environment.getActions())
 				+this.translateActivityCollection(agent.getActivityCollection())
+				+this.translateActionCollection(agent.getActionCollection())
+				
+				//+this.translateActivityCollection(Environment.getActivities())
 				+ CommonStringUtils.tabs(--tab)+")\n" // knowledge end
 				+"\n)";
 	}
+	
 	public String translateActivityCollection(ActivityCollection collection){
 		String str = "";
 		for(Activity activity:collection.getActivities())
@@ -72,42 +103,70 @@ public class JSHOP2Translator {
 		String str="\n";
 		str+=CommonStringUtils.tabs(tab)
 				+"(:operator "+this.formatFunctionSignature(action.getMessage(), "!"+action.getName())
-				+"\n"+ CommonStringUtils.tabs(tab)+"()"
-				+"\n"+ CommonStringUtils.tabs(tab)+"("+this.formatFunctionSignatureCollection(action.getConditions())+")"
+				+"\n"+ CommonStringUtils.tabs(tab)+"("+action.getCondition().toString()+") ;;PreConditions"
+				//+"\n"+ CommonStringUtils.tabs(tab)+this.formatFunctionSignatureCollection(action.getConditions())+" ;;PreConditions"
+				+"\n"+ CommonStringUtils.tabs(tab)+this.formatFunctionSignatureCollection(action.getDeleteEffects())+" ;;Delete Effects"
+				+"\n"+ CommonStringUtils.tabs(tab)+this.formatFunctionSignatureCollection(action.getAddEffects())+" ;;Add Effects"
+				
+				//+"\n"+ CommonStringUtils.tabs(tab)+"("+this.formatFunctionSignatureCollection(action.getConditions())+")"
 				;
 				str+= "\n"+CommonStringUtils.tabs(tab)+")\n";
 		return str;
 	}
 	private String translateActivity(Activity activity){
 		String str="\n";
+		String activityName = activity.getName();
+		String s;
+		if(activityName.equals("moveto_cell1"))
+			s = "test";
 		str+=CommonStringUtils.tabs(tab)
-				+"(:method "+this.formatFunctionSignature(activity.getMessage(), "!"+activity.getName())
-				+"\n"+ CommonStringUtils.tabs(tab)+"()"
-				+"\n"+ CommonStringUtils.tabs(tab)+"("+this.formatFunctionSignatureCollection(activity.getConditions())+")"
+				+"(:method "+this.formatFunctionSignature(activity.getMessage(), ""+activity.getName())
+				//+"\n"+ CommonStringUtils.tabs(tab)+"()"
+				//+"\n"+ CommonStringUtils.tabs(++tab)+""+this.formatFunctionSignatureCollection(activity.getConditions())+""
+				+"\n"+ CommonStringUtils.tabs(tab)+"("+activity.getCondition().toString()+")"
+				+"\n"+CommonStringUtils.tabs(tab)+"("
 				;
+		if(!activity.isOrdered())
+			str+=":unordered ";
+				for(FunctionSignature fs: activity.getDoCalls().getFunctionSignatureCollection()){
+					if(agent.checkActionCall(fs))
+						str+=fs.toString(true);
+					else
+					str+=fs.toString(false);
+				}
+				str+=")";
+				/*for(Action action:activity.getActions())
+				{
+					str+= "("+action.getMessageCall();
+					str+= ")";
+				}*/
 				str+= "\n"+CommonStringUtils.tabs(tab)+")\n";
 		return str;
 	}
 	private String formatFunctionSignatureCollection(FunctionSignatureCollection fc){
-		String str = "";
+		String str = "(";
 		for(FunctionSignature fs:fc.getFunctionSignatureCollection())
 			str+=this.formatFunctionSignature(fs, fs.getName());
-		return str;
+		return str+")";
+	}
+	private String formatFunctionSignature(FunctionSignature fs){
+		return this.formatFunctionSignature(fs, fs.getName());
 	}
 	private String formatFunctionSignature(FunctionSignature fs,String functionName){
 		String str = "("+functionName+" ";
 		ArrayList<String> variables = fs.getVariables();
 			for(int i=0;i<variables.size();i++){
 				if(variables.size()==1)
-					str+=" ?"+variables.get(i)+")";
+					str+=" "+variables.get(i)+"";
 				if(variables.size()>1){
 					if(i==0)
-						str+=" ?"+variables.get(i);
-					else str+=", ?"+variables.get(i);
+						str+=" "+variables.get(i);
+					else str+=" "+variables.get(i);
 					if(i==variables.size()-1)
-						str+=")";
+						str+="";
 				}
 			}
+			str+=")";
 		return str;
 	}
 	private String translateKnowledgeCollection(KnowledgeCollection kc){
@@ -149,6 +208,33 @@ public class JSHOP2Translator {
 			e.printStackTrace();
 		}
 	   
+	}
+	public static void main(String[] args) {
+		FileReader stream;
+		try {
+			String folder = "F:\\epclaimcodes\\shop2\\usman\\";
+			stream = new FileReader(folder+"analyzer.ep");
+			PlaceGrammar parser = new PlaceGrammar(stream);
+			System.out.println("Starting Compiling ...");
+			PlaceObjectCollection data = parser.compile();
+			//System.out.println(data+ "\nEnding ...");
+			//System.out.println(data.getEnvironment().getGlobalKnowledgeCollection());
+			for (Agent agent : data.getAgentsCollection().getAgentsList()) {
+				agent.setEnvironment(data.getEnvironment());
+				//System.out.println(agent.getKnowledgeCollection());
+				JSHOP2Translator translator = new JSHOP2Translator(agent,folder);
+				translator.translate();
+				System.out.println(agent.getName()+" Translated ...");
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+
 	}
 	
 }

@@ -1,0 +1,13 @@
+/**
+ * epclaim.planner
+ * 
+ */
+package epclaim.planner;
+
+/**
+ * @author Usman
+ *
+ */
+public class PlanNotFoundException extends Exception {
+
+}

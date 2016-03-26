@@ -1,0 +1,19 @@
+package epclaim.centralsystem;
+
+import JSHOP2Wrapper.JShop2Planner;
+import epclaim.compiler.Environment;
+import epclaim.planner.IPlanner;
+
+public class CentralSystem {
+	private Environment env;
+	private IPlanner planner;
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		CentralSystem cs = new CentralSystem(new JShop2Planner());
+		
+	}
+	
+	public CentralSystem(IPlanner planner){
+		this.planner = planner;
+	}
+}

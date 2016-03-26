@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import epclaim.utils.CommonStringUtils;
 
+/**
+ * The class to handle the collection of Action Objects
+ * @author Usman
+ *
+ */
 public class ActionCollection {
 	private ArrayList<Action> actions;
 

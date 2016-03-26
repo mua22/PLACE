@@ -1,0 +1,67 @@
+/**
+ * epclaim.sapa
+ * 
+ */
+package epclaim.sapa;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import edu.asu.sapa.Planner;
+
+import edu.asu.sapa.parsing.Domain;
+import edu.asu.sapa.parsing.PDDL21Parser;
+import edu.asu.sapa.parsing.ParseException;
+import edu.asu.sapa.parsing.Problem;
+
+
+/**
+ * @author Usman
+ *
+ */
+public class SapaWrapper {
+
+	/**
+	 * @param args
+	 */
+	private String domainFile;
+	private String problemFile;
+	
+	public SapaWrapper(String domainFile, String problemFile) {
+		super();
+		this.domainFile = domainFile;
+		this.problemFile = problemFile;
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		SapaWrapper sw = new SapaWrapper("F:\\sapa\\examples\\depots\\DepotsSimpleTime.pddl", "F:\\sapa\\examples\\depots\\pfile1.pddl");
+		sw.getPlan();
+	}
+	public void getPlan(){
+		Planner sapa = new Planner();
+		Domain domain;// = new Domain();
+	    Problem prob;// = new Problem();
+	    println(this.domainFile);
+	    println(this.problemFile);
+		FileInputStream pddl_file;
+		try {
+			pddl_file = new java.io.FileInputStream(this.problemFile);
+			PDDL21Parser.ReInit(pddl_file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			domain = PDDL21Parser.parse_domain_pddl();
+			System.out.println(domain.numAction()+" Actions found in domain file");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void println(String str){
+		System.out.println(str);
+	}
+}

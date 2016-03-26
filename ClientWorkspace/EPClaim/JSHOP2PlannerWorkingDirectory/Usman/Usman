@@ -1,0 +1,34 @@
+;;; Domain Representation for the agent:Usman
+
+(defdomain Usman	(
+
+		(:method (watch  ?c)
+		((agent_in r2))
+		((!OP_watchTV r2))
+		)
+
+		(:method (watch  ?c)
+		((and(agent_in ?a)(tv_placed ?c)(tv_status off)))
+		((!OP_move ?a ?c)(!OP_TurnOnTv ?c)(watch ?b))
+		)
+
+		(:operator (!OP_move  ?a ?b)
+		((agent_in ?a)) ;;PreConditions
+		((agent_in  ?a)) ;;Delete Effects
+		((agent_in  ?b)) ;;Add Effects
+		)
+
+		(:operator (!OP_watchTV  ?c)
+		((and(agent_in r2)(tv_status on))) ;;PreConditions
+		() ;;Delete Effects
+		((watching  tv)) ;;Add Effects
+		)
+
+		(:operator (!OP_TurnOnTv  ?c)
+		((and(agent_in r2)(tv_status off))) ;;PreConditions
+		((tv_status  off)) ;;Delete Effects
+		((tv_status  on)) ;;Add Effects
+		)
+	)
+
+)

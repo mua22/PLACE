@@ -1,0 +1,13 @@
+/**
+ * epclaim.planner
+ * 
+ */
+package epclaim.planner;
+
+/**
+ * @author Usman
+ * the planner Interface. Every Planner must implement this interface
+ */
+public interface IPlanner {
+	public void getPlan(Agent agent);
+}

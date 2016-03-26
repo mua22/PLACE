@@ -1,0 +1,12 @@
+;;; Domain Representation for the agent:ambulance
+
+(defdomain ambulance	(
+
+		(:operator (!Op_move  ?a ?b)
+		((agent_in ?a)) ;;PreConditions
+		((agent_in  ?a)) ;;Delete Effects
+		((agent_in  ?b)) ;;Add Effects
+		)
+	)
+
+)

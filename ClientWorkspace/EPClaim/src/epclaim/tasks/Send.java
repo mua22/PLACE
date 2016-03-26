@@ -6,7 +6,7 @@ import epclaim.compiler.Agent;
 import epclaim.compiler.FunctionSignature;
 import epclaim.utils.MessageType;
 
-public class Send extends PremitiveTask {
+public class Send extends PrimitiveTask {
 	String uniqueID;
 	String actionActivityName;
 	MessageType type;
@@ -29,7 +29,7 @@ public class Send extends PremitiveTask {
 
 	@Override
 	public String toString() {
-		return "ActionMessage [uniqueID=" + uniqueID + ", content=" + functionSignature
+		return "ActionMessage [uniqueID=" + uniqueID + ", content=" + message
 				+ ", type=" + type + "]";
 	}
 	@Override

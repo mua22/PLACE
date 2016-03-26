@@ -1,48 +1,44 @@
 package epclaim.compiler;
 
-import java.util.ArrayList;
-
-import epclaim.tasks.PremitiveTask;
-import epclaim.tasks.Send;
+import epclaim.tasks.PrimitiveTask;
 import epclaim.utils.ActionType;
 import epclaim.utils.CommonStringUtils;
 import epclaim.utils.ConditionLogic;
 
-public class Action {
-	private String name;
-	private FunctionSignature message;
-	private FunctionSignatureCollection conditions;
-	private ConditionLogic conditionLogic;
+/**
+ * Represent the EPClaim Action Object
+ * @author Usman
+ *
+ */
+public class Action extends Capability {
 	private ActionType actionType;
-	private Send actionMessage;
-	private int duration;
-	private ArrayList<PremitiveTask> tasks;
+	private int duration=0;
+	private PrimitiveTask moveAgent;
 	public int getDuration() {
 		return duration;
 	}
-
-	public String getName() {
-		return name;
+	
+	public Action(FunctionSignature message) {
+		this();
+		this.message = message;
+	}
+	
+	/**
+	 * initializes the collection variables. 
+	 */
+	public Action() {
+		super();
+		setFields();
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public FunctionSignatureCollection getConditions() {
-		return conditions;
-	}
-
-	public void setConditions(FunctionSignatureCollection conditions) {
-		this.conditions = conditions;
-	}
-
-	public ArrayList<PremitiveTask> getTasks() {
-		return tasks;
-	}
-
-	public void setTasks(ArrayList<PremitiveTask> tasks) {
-		this.tasks = tasks;
+	/**
+	 * 
+	 */
+	private void setFields() {
+		this.conditions = new FunctionSignatureCollection();
+		this.addEffects = new FunctionSignatureCollection();
+		this.deleteEffects = new FunctionSignatureCollection();
+		this.message = new FunctionSignature();
 	}
 
 	public ConditionLogic getConditionLogic() {
@@ -53,20 +49,10 @@ public class Action {
 		this.duration = duration;
 	}
 
-	public Send getActionMessage() {
-		return actionMessage;
-	}
-
-	public void setActionMessage(Send actionMessage) {
-		this.actionMessage = actionMessage;
-	}
-
 	public Action(String name) {
-		super();
-		this.name = name;
-		conditions = new FunctionSignatureCollection();
-		this.conditionLogic = ConditionLogic.NOTHING;
-		this.tasks = new ArrayList<PremitiveTask>();
+		
+		super(name);
+		this.setFields();
 		this.actionType = ActionType.ORDERED;
 	}
 
@@ -77,24 +63,35 @@ public class Action {
 		return actionType;
 	}
 
+	public boolean add(FunctionSignature e) {
+		return conditions.add(e);
+	}
+
 	public void setActionType(ActionType actionType) {
 		this.actionType = actionType;
 	}
 
-	public boolean addTask(PremitiveTask e) {
-		return tasks.add(e);
-	}
+	
 
-	public FunctionSignature getMessage() {
-		return message;
-	}
-
-	public void setMessage(FunctionSignature message) {
+	
+	/**
+	 * Sets the Function Signature of the action also sets its name to be the same as of presented in function Signature
+	 * e.g. moveAgent(?artifactName)
+	 * where moveagent would be set as the name of the Action
+	 * @param message
+	 */
+	public void setFunctionSignature(FunctionSignature message) {
+		this.setName(message.getName());
 		this.message = message;
 	}
-	
 	public boolean addCondition(FunctionSignature e) {
 		return conditions.add(e);
+	}
+	public boolean addAddEffect(FunctionSignature e) {
+		return this.addEffects.add(e);
+	}
+	public boolean addDeleteEffect(FunctionSignature e) {
+		return this.deleteEffects.add(e);
 	}
 	public void setConditionLogic(ConditionLogic conditionLogic) {
 		
@@ -107,7 +104,7 @@ public class Action {
 				+"message="+message+"\n"
 				+"conditions="+conditions
 				+ ", actionMessage=" + actionMessage + ", duration=" + duration
-				+ ",tasks= "+tasks;
+				;
 				
 				
 		return str+CommonStringUtils.CurlyBraceClose(true);
@@ -119,6 +116,31 @@ public class Action {
 //				+ ",tasks= "+tasks
 //				+ "]";
 	}
-	
 
+	/* (non-Javadoc)
+	 * @see epclaim.tasks.IPerformable#perform(epclaim.compiler.Agent)
+	 */
+	@Override
+	public boolean perform(Agent agent) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	protected FunctionSignatureCollection deleteEffects;
+	protected FunctionSignatureCollection addEffects;	
+	public FunctionSignatureCollection getDeleteEffects() {
+		return deleteEffects;
+	}
+
+	public FunctionSignatureCollection getAddEffects() {
+		return addEffects;
+	}
+
+	public void setDeleteEffects(FunctionSignatureCollection deleteEffects) {
+		this.deleteEffects = deleteEffects;
+	}
+
+	public void setAddEffects(FunctionSignatureCollection addEffects) {
+		this.addEffects = addEffects;
+	}
+	
 }

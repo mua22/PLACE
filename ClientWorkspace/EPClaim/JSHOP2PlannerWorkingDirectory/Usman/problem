@@ -1,0 +1,17 @@
+;;; Problem Representation for the agent:Usman
+
+(defproblem problem Usman
+	(
+		(tv_placed r2)
+		(tv_status off)
+		(agent_in r1)
+		(connected r1 r2)
+		(connected r2 r1)
+	)
+	(
+		(
+			(watch r2)
+		)
+	)
+
+)

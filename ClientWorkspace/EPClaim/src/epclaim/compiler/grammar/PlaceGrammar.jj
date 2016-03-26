@@ -5,7 +5,21 @@ import epclaim.compiler.*;
 import epclaim.utils.*;
 import java.util.ArrayList;
 import epclaim.tasks.*;
-public class PlaceGrammar{}PARSER_END(PlaceGrammar)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */
+public class PlaceGrammar{}PARSER_END(PlaceGrammar)SKIP :{  " "| "\r"| "\t"| "\n"}
+SKIP :
+{
+  "/*" : WithinComment
+}
+
+<WithinComment> SKIP :
+{
+  "*/" : DEFAULT
+}
+
+<WithinComment> MORE :
+{
+  <~[]>
+}TOKEN : /* OPERATORS */
 {
 <OBRA : "(" > 
 | <CBRA: ")" >
@@ -22,13 +36,17 @@ public class PlaceGrammar{}PARSER_END(PlaceGrammar)SKIP :{  " "| "\r"
 | < COMMA : ",">
 | < DOT : ".">
 | < AND : "and">
+| < OR : "or">
 | < CONSTANT : (< DIGIT >)+ >
 | < #DIGIT : [ "0"-"9" ] >
-}TOKEN : {
+| < VARIABLE : < QUESTION> < NAME>>
+}TOKEN : /* PLACE Tokens */{
   < DEFINE_AGENT : "defineAgent">
 | < DEFINE_ENVIRONMENT : "defineEnvironment">
 | < DEFINE_ARTIFACT : "defineArtifact">
 | <KNOWLEDGE: "knowledge" >
+| <ADD_EFFECT: "addEffects" >
+| <DELETE_EFFECT: "deleteEffects" >
 | < GOALS:"goals" >
 | <ARTIFACTS: "artifacts" >
 | <CONNECTED_TO: "connectedTo" >
@@ -54,9 +72,12 @@ public class PlaceGrammar{}PARSER_END(PlaceGrammar)SKIP :{  " "| "\r"
 | < REMOVEKNOWLEDGE: "removeKnowledge" >
 | < ORDERED: "ordered" >
 | < UNORDERED: "unordered" >
+| < AGENT_IN: "agent_in">
 | <NAME :["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* > 
 }
-public PlaceObjectCollection compile() :
+/*
+* Starts the compilation of the loaded file. 
+*/public PlaceObjectCollection compile() :
 {
   PlaceObjectCollection data = new PlaceObjectCollection();
   Token token;
@@ -64,6 +85,10 @@ public class PlaceGrammar{}PARSER_END(PlaceGrammar)SKIP :{  " "| "\r"
 {
   (    < DEFINE_AGENT >token=< NAME>    {
       Agent agent = new Agent(token.image);    }< OCBRA >
+    (
+      < AGENT_IN> < EQUAL> < OCBRA>token=< NAME>< CCBRA>
+      {
+        agent.setAgent_in(token.image);      }    )?
 	(
 	    < KNOWLEDGE >< EQUAL >< OCBRA>
 	    {
@@ -171,18 +196,26 @@ private Action getAction(String actionName) :
   action.setMessage(getFunctionSignature());}
     < SEMICOLON>  )?
   (
-    <CONDITION> <EQUAL >
-    
-      (
-        {
-      		action = this.setActionConditions(action);
-    	}      )    
-      )?
+   <CONDITION> <EQUAL >
+    {
+      //activity = (Activity)this.setActionConditions(activity);
+      action.setCondition(this.getCondition());
+    }
+    <SEMICOLON >  )?
   (
-    < DO >< OCBRA>
-		{
-		  action = this.setActionDo(action);		}
-    < CCBRA>  )?
+	    <ADD_EFFECT> < EQUAL >
+			   {
+			     action = this.getEffectsForAction(action,1);			   }
+	    
+	  )?
+	  (
+	    <DELETE_EFFECT> < EQUAL >
+	    {
+			     action = this.getEffectsForAction(action,0);
+			   }
+		  
+	    
+	  )?
   (
     < DURATION >< EQUAL>token=<CONSTANT >< SEMICOLON >
     {
@@ -191,6 +224,34 @@ private Action getAction(String actionName) :
     return action;
   }
 }
+
+private Action getEffectsForAction(Action action,int isAdd) :
+{}
+{
+  (
+    < NULL ><SEMICOLON >
+    {
+      return action;    }  )|
+  (< OCBRA >
+    (
+		    {
+		      if(isAdd==1)
+		      action.addAddEffect(this.getFunctionSignature());
+		      else action.addDeleteEffect(this.getFunctionSignature());
+		    }    
+		    
+		  )
+		   (<COMMA> 
+		    {
+		      if(isAdd==1)
+		      action.addAddEffect(this.getFunctionSignature());
+		      else action.addDeleteEffect(this.getFunctionSignature());
+		    }    
+		    
+		  )*< CCBRA>)
+		  {
+		    return action;		  }
+  }
 private Activity getActivity(String actionName) :
 {
   Token token;
@@ -199,21 +260,23 @@ private Activity getActivity(String actionName) :
 {
   (
     < MESSAGE> < EQUAL>
-{
-  activity.setMessage(getFunctionSignature());
-}
+		{
+		  activity.setMessage(getFunctionSignature());
+		}
     < SEMICOLON>
-  )?
+  )
   (
     <CONDITION> <EQUAL >
     {
-      activity = (Activity)this.setActionConditions(activity);
+      //activity = (Activity)this.setActionConditions(activity);
+      activity.setCondition(this.getCondition());
     }
+    <SEMICOLON >
   )?
   (
     < DO >< OCBRA>
 		{
-		  activity = (Activity)this.setActionDo(activity);
+		  activity = this.setActivityDo(activity);
 		}
     < CCBRA>
   )?
@@ -228,6 +291,17 @@ private Activity getActivity(String actionName) :
     return activity;
   }
 }
+
+private Activity setActivityDo(Activity activity) :{}
+{
+  (
+    <UNORDERED>    {
+      activity.setOrdered(false);    }  )?
+  (< OBRA >
+    {      activity.addDoCall(this.getFunctionSignature());    }    
+    < CBRA >  )*
+  {
+    return activity;  }}
 private Action setActionDo(Action action) :
 {}
 {
@@ -268,7 +342,7 @@ private Action setActionDoElement(Action action) :
   (    (
     < REMOVEKNOWLEDGE><OBRA >
 		{
-		  action.addTask(new RemoveKnowledge(this.getFunctionSignature()));
+		  //action.addTask(new RemoveKnowledge(this.getFunctionSignature()));
 		  //action.setRemoveKnowledge(this.getFunctionSignature());		}
     < CBRA>  )|(
     < SEND><OBRA >((token=< THIS>)|(< QUESTION>token=< NAME>))< COMMA>	
@@ -277,14 +351,14 @@ private Action setActionDoElement(Action action) :
 		  
 		   sendTask = new Send(null,MessageType.TELL,token.image);
 		   sendTask = this.getSendTask(sendTask);
-		  action.addTask(sendTask);
+		  //action.addTask(sendTask);
 		}
     < CBRA>
   )|
   (
 		< NEWAGENT > < OBRA>< QUESTION>token=< NAME>< CBRA>
 		{
-		  action.addTask(new NewAgent(token.image));		}
+		  //action.addTask(new NewAgent(token.image));		}
     )
   )?
   {
@@ -311,17 +385,19 @@ private FunctionSignature getFunctionSignature() :
   Token token;}
 {
   (
-    token=< NAME >< OBRA>
+    (      (token=< NAME >)|(token=<AGENT_IN>))< OBRA>
 		{
 		  fs.setName(token.image);		}
 		(
 		  (
-		    < QUESTION > token=< NAME >
+		    (		      (		        token=< VARIABLE >)|(token=< NAME>))
 		    {		      fs.addVariable(token.image);
 		    }
 		  )
 		  (
-		    < COMMA >< QUESTION > token=< NAME >
+		    < COMMA > (
+		      (
+		        token=< VARIABLE >)|(token=< NAME>))
 		    {
 		      fs.addVariable(token.image);
 		    }		  )*
@@ -342,7 +418,67 @@ private String getVariable() :
 	)
   {
     return variable;  }}
-private Action setActionConditions(Action action) :
+private Condition getCondition() :
+{
+  Condition condition = new Condition();
+  Token token;}
+{
+      (      (<NULL>)
+  |(
+	<HASKNOWLEDGE><OBRA >	{
+	  condition.addCondition(this.getFunctionSignature());
+	  	}<CBRA >
+	
+    )|(
+	< OBRA >((token=<AND>)|(token=< OR >))<OBRA >
+	{
+	  if(token.image=="and")
+	  condition.setAndType();
+		else condition.setOrType();
+	  }
+	(  
+	{
+	  
+	  condition.addChildCondition(this.getCondition());
+	  
+	})
+(  < COMMA >
+	{
+	  
+	  condition.addChildCondition(this.getCondition());
+	  
+	})+
+	(< CBRA><CBRA >)
+	
+    )
+
+    )
+  {
+	  return condition;
+	}
+
+	  }
+private Condition getAndhasCondition() :
+{
+  Condition condition = new Condition();}{  
+(
+  {
+    condition.addChildCondition(this.getHasKnowledgeCondition());  })
+{ return condition;}
+ }
+
+private Condition getHasKnowledgeCondition() :{
+  Condition condition = new Condition();}
+{
+  
+    (      <HASKNOWLEDGE><OBRA >
+    {
+      condition.addCondition(this.getFunctionSignature());    }
+    < CBRA >)
+      {
+      return condition;
+    }}
+private Capability setActionConditions(Capability action) :
 {}
 {
   (    (
@@ -353,13 +489,13 @@ private Action setActionConditions(Action action) :
 		< AND>< OBRA>
 			(<HASKNOWLEDGE><OBRA >
 			  {
-			    action.setConditionLogic(ConditionLogic.AND);
-		  		action.addCondition(this.getFunctionSignature());
+			    //action.setConditionLogic(ConditionLogic.AND);
+		  		//action.addCondition(this.getFunctionSignature());
 			}<CBRA>
 			)
 			(< COMMA><HASKNOWLEDGE><OBRA >
 				{
-		  		action.addCondition(this.getFunctionSignature());
+		  		//action.addCondition(this.getFunctionSignature());
 			}<CBRA>
 			  )+
 		<CBRA ><SEMICOLON >

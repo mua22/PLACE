@@ -2,6 +2,7 @@ package epclaim.compiler;
 
 import java.util.ArrayList;
 
+import epclaim.exceptions.ActionNotFoundException;
 import epclaim.utils.CommonStringUtils;
 
 public class Agent {
@@ -9,10 +10,36 @@ public class Agent {
 	private KnowledgeCollection knowledgeCollection;
 	private KnowledgeCollection goalCollection;
 	private Environment environment;
-	public ActionCollection getActionCollection() {
-		return actionCollection;
+	private String agent_in="";
+	public String getAgentName() {
+		return agentName;
 	}
 
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
+	}
+
+	public String getAgent_in() {
+		return agent_in;
+	}
+
+	public void setAgent_in(String agent_in) {
+		this.agent_in = agent_in;
+	}
+
+	/*
+	 * Returns the action's action collection object
+	 * An Agent'a actions are the collection of its own actions, its artifact's action and the environment's actions
+	 */
+	public ActionCollection getActionCollection() {
+		ActionCollection collection = new ActionCollection();
+		for(Action action:Environment.getActions().getActions())
+			collection.add(action);
+		for(Action action:this.actionCollection.getActions())
+			collection.add(action);
+		return collection;
+	}
+	
 	public ActivityCollection getActivityCollection() {
 		return activityCollection;
 	}
@@ -22,6 +49,11 @@ public class Agent {
 	public KnowledgeCollection getKnowledgeCollection() {
 		if(this.knowledgeCollection==null)
 			this.knowledgeCollection = new KnowledgeCollection();
+		ArrayList<String> params = new ArrayList<String>();
+		params.add(this.agent_in);
+		Knowledge agent_inKnowledge = new Knowledge("agent_in",params);
+		
+		this.knowledgeCollection.add(agent_inKnowledge);
 		KnowledgeCollection environmentKnowledge = this.environment.getGlobalKnowledgeCollection();
 		
 		return this.knowledgeCollection.mergeKnowledgeCollection(environmentKnowledge);
@@ -82,4 +114,38 @@ public class Agent {
 		//return "Agent [agentName=" + agentName+"\n Knowledge =" + knowledgeCollection+"\nActions = " + actionCollection;
 	}
 	
+	/*
+	 * Check if the Function Signature matches any Action Call
+	 */
+	public boolean checkActionCall(FunctionSignature fs){
+		boolean isCall = false;
+		String fsname = fs.getName();
+		
+		ArrayList<Action> acts = this.getActionCollection().getActions();
+		for(int i=0;i<acts.size();i++){
+			Action action = acts.get(i);
+			String actionName = action.getName();
+			if(actionName.equals(fsname))
+				isCall=true;
+		}
+			/*for(Action action:acts){
+				String actionName = action.getName();
+				if(actionName.equals(fsname))
+					return true;
+			
+		}*/
+		return isCall;
+	}
+	public Action getActionByCall(FunctionSignature fs) throws ActionNotFoundException{
+		ActionCollection collection = this.getActionCollection();
+		Action action = null;
+		for(Action act: collection.getActions()){
+			if(act.getName().equals(fs.getName()))
+				action = act;
+		}
+		if(action==null)
+			throw new ActionNotFoundException();
+		else return action;
+		
+	} 
 }
