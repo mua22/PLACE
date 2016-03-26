@@ -18,6 +18,8 @@ public class PlanStringConverter{  public static void main(String args []) thr
 | < DASH : "-" >| < EXCLAMATION : "!" >
 | < COLON: ":" >| < OBRA : "(" >
 | < CBRA : ")" >
+| < OBBRA : "[" >
+| < CBBRA : "]" >
 | < FLOAT: (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
       | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
       | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
@@ -30,22 +32,25 @@ public class PlanStringConverter{  public static void main(String args []) thr
   Token floatToken;
   float cost=0;}
 
-{
-  	(< PLAN ><COST ><COLON >floatToken=<FLOAT >  	{
-  	  cost = Float.parseFloat(floatToken.image);  	}
-  	(  	  <OBRA >
-		< EXCLAMATION >
+{ 	  	
+  	(
 		{
 		  FunctionSignature fs = new FunctionSignature();		}
-		(token=< NAME>)		{
+		(floatToken=< FLOAT>)		{
+		  fs.setStartTime(Float.parseFloat(floatToken.image));		}< COLON ><OBRA >
+			(token=< NAME>)
+		{
 		  fs.setName(token.image);
-		} (token=< NAME> {
+		}(token=< NAME> {
 		      fs.addVariable(token.image);
-		    })+ 
-  	<CBRA >
+		    })+
+		<CBRA ><OBBRA >(floatToken=< FLOAT>)
+		{
+		  fs.setDuration(Float.parseFloat(floatToken.image));
+		}<CBBRA >
 	{
 	  collection.add(fs);	}
-  	)+ (< DASH>)+
-	)
+  	)+ 
+	
 	{
 	  return new PLACEPlan(collection,cost);	}}

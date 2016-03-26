@@ -25,15 +25,19 @@ public interface PlanStringConverterConstants {
   /** RegularExpression Id. */
   int CBRA = 11;
   /** RegularExpression Id. */
-  int FLOAT = 12;
+  int OBBRA = 12;
   /** RegularExpression Id. */
-  int EXPONENT = 13;
+  int CBBRA = 13;
   /** RegularExpression Id. */
-  int NAME = 14;
+  int FLOAT = 14;
   /** RegularExpression Id. */
-  int CONSTANT = 15;
+  int EXPONENT = 15;
   /** RegularExpression Id. */
-  int DIGIT = 16;
+  int NAME = 16;
+  /** RegularExpression Id. */
+  int CONSTANT = 17;
+  /** RegularExpression Id. */
+  int DIGIT = 18;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -52,6 +56,8 @@ public interface PlanStringConverterConstants {
     "\":\"",
     "\"(\"",
     "\")\"",
+    "\"[\"",
+    "\"]\"",
     "<FLOAT>",
     "<EXPONENT>",
     "<NAME>",

@@ -1,493 +1,0 @@
-/**
- * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = false;}PARSER_BEGIN(PlaceGrammar)package epclaim.compiler.grammar;
-import epclaim.compiler.*;
-import epclaim.utils.*;
-import java.util.ArrayList;
-import epclaim.tasks.*;
-public class PlaceGrammar{}PARSER_END(PlaceGrammar)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */
-{
-<OBRA : "(" > 
-| <CBRA: ")" >
-| <OCBRA : "{" >
-| <CCBRA: "}" >
-| < PLUS : "+" >
-| < QUESTION : "?" >
-| < MINUS : "-" >
-| < MULTIPLY : "*" >
-| < DIVIDE : "/" >
-| < EQUAL : "=">
-| < NULL : "null" >
-| < SEMICOLON : ";">
-| < COMMA : ",">
-| < DOT : ".">
-| < AND : "and">
-| < CONSTANT : (< DIGIT >)+ >
-| < #DIGIT : [ "0"-"9" ] >
-}TOKEN : /* PLACE Tokens */{
-  < DEFINE_AGENT : "defineAgent">
-| < DEFINE_ENVIRONMENT : "defineEnvironment">
-| < DEFINE_ARTIFACT : "defineArtifact">
-| <KNOWLEDGE: "knowledge" >
-| < GOALS:"goals" >
-| <ARTIFACTS: "artifacts" >
-| <CONNECTED_TO: "connectedTo" >
-| <PARENT: "parent" >
-| <ACTIONS: "actions" >
-| < MESSAGE: "message" >
-| <ACTIVITIES: "activities" >
-| < CONDITION: "condition">
-| < HASKNOWLEDGE: "hasKnowledge" >
-| < DO:"do" >
-| < SEND: "send" >
-| < THIS: "this" >
-| < TELL: "tell">
-| < CALL: "call">
-| < JAVA: "java">
-| < NEWAGENT: "newAgent">
-| < KILL: "kill">
-| < IN: "in">
-| < OUT: "out">
-| < MOVE: "move">
-| < DURATION: "duration" >
-| < EFFECTS: "effects" >
-| < REMOVEKNOWLEDGE: "removeKnowledge" >
-| < ORDERED: "ordered" >
-| < UNORDERED: "unordered" >
-| < AGENT_IN: "agent_in">
-| <NAME :["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* > 
-}
-/*
-* Starts the compilation of the loaded file. 
-*/public PlaceObjectCollection compile() :
-{
-  PlaceObjectCollection data = new PlaceObjectCollection();
-  Token token;
-}
-{
-  (    < DEFINE_AGENT >token=< NAME>    {
-      Agent agent = new Agent(token.image);    }< OCBRA >
-    (
-      < AGENT_IN> < EQUAL> < OCBRA>token=< NAME>< CCBRA>
-      {
-        agent.setAgent_in(token.image);      }    )?
-	(
-	    < KNOWLEDGE >< EQUAL >< OCBRA>
-	    {
-	      KnowledgeCollection  kb = this.getKnowledgeCollection();
-	      agent.setKnowledgeCollection(kb);
-	    }
-	    < CCBRA>
-	  )?
-	  (
-	    < GOALS >< EQUAL >< OCBRA>
-	    {
-	      KnowledgeCollection  kb = this.getKnowledgeCollection();
-	      agent.setGoalCollection(kb);
-	    }
-	    < CCBRA>
-	  )?
-	  (
-	    < ACTIONS >< EQUAL >< OCBRA>
-	    {
-	      ActionCollection  ac = this.getActionCollection();
-	      agent.setActionCollection(ac);
-	    }
-	    < CCBRA>
-	  )?
-	  (
-	    < ACTIVITIES >< EQUAL >< OCBRA>
-	    {
-	      ActivityCollection  ac = this.getActivityCollection();
-	      agent.setActivityCollection(ac);
-	    }
-	    < CCBRA>
-	  )?
-    < CCBRA >
-    {
-      data.putAgent(agent.getName(),agent);    }
-    )*
-    (
-    < DEFINE_ENVIRONMENT >token=< NAME>< OCBRA >
-	{
-	  Environment env = getEnvironmentDetails(token.image);
-	  data.setEnvironment(env);	}
-    < CCBRA >
-    )?< EOF>
-    {
-      return data;    }
-}
-
-private Environment getEnvironmentDetails(String envName) :{
-  Environment env = new Environment(envName);  }
-{
-  (
-    < KNOWLEDGE >< EQUAL >< OCBRA>
-    {
-      KnowledgeCollection  kb = this.getKnowledgeCollection();
-      env.setGlobalKnowledgeCollection(kb);    }
-    < CCBRA>  )?(< ARTIFACTS >< EQUAL>< OCBRA>  {
-    env = this.addArtifact(env);  }< CCBRA>)?
-  {
-    return env;  }}
-private ActionCollection getActionCollection() :
-{
-  ActionCollection actionCollection = new ActionCollection();
-  Token token;
-}
-{
-
-	
-	(token=< NAME >< OCBRA>
-	  {
-	  actionCollection.add(this.getAction(token.image));
-	} < CCBRA >)*
-    
-  
-  {
-    return actionCollection;
-  }
-}
-private ActivityCollection getActivityCollection() :
-{
-  ActivityCollection activityCollection = new ActivityCollection();
-  Token token;
-}
-{
-
-	
-	(token=< NAME >< OCBRA>
-	  {
-	  activityCollection.add(this.getActivity(token.image));
-	} < CCBRA >)*
-    
-  
-  {
-    return activityCollection;
-  }
-}
-private Action getAction(String actionName) :
-{
-  Token token;
-  Action action = new Action(actionName);
-}
-{
-  (
-    < MESSAGE> < EQUAL>
-{
-  action.setMessage(getFunctionSignature());}
-    < SEMICOLON>  )?
-  (
-    <CONDITION> <EQUAL >
-    
-      (
-        {
-      		//action = this.setActionConditions(action);
-    	}      )    
-      )?
-  (
-    < DO >< OCBRA>
-		{
-		  //action = this.setActionDo(action);		}
-    < CCBRA>  )?
-  (
-    < DURATION >< EQUAL>token=<CONSTANT >< SEMICOLON >
-    {
-      action.setDuration(Integer.parseInt(token.image));    }  )?
-  {
-    return action;
-  }
-}
-private Activity getActivity(String actionName) :
-{
-  Token token;
-  Activity activity = new Activity(actionName);
-}
-{
-  (
-    < MESSAGE> < EQUAL>
-		{
-		  activity.setMessage(getFunctionSignature());
-		}
-    < SEMICOLON>
-  )
-  (
-    <CONDITION> <EQUAL >
-    {
-      //activity = (Activity)this.setActionConditions(activity);
-      activity.setCondition(this.getCondition());
-    }
-    <SEMICOLON >
-  )?
-  (
-    < DO >< OCBRA>
-		{
-		  activity = this.setActivityDo(activity);
-		}
-    < CCBRA>
-  )?
-  (
-    < EFFECTS ><EQUAL >
-		{
-		  activity = (Activity)this.setActionConditions(activity);
-		}
-    
-  )?
-  {
-    return activity;
-  }
-}
-
-private Activity setActivityDo(Activity activity) :{}
-{
-  (
-    <UNORDERED>    {
-      activity.setOrdered(false);    }  )?
-  (< OBRA >
-    {      activity.addDoCall(this.getFunctionSignature());    }    
-    < CBRA >  )*
-  {
-    return activity;  }}
-private Action setActionDo(Action action) :
-{}
-{
-  (
-    (
-      < UNORDERED > <OBRA >
-      (
-      {
-        action = this.setActionDoElement(action);
-        action.setActionType(ActionType.UNORDERED);
-      }
-    )(< DOT>
-	{
-        action = this.setActionDoElement(action);
-        action.setActionType(ActionType.UNORDERED);
-      }
-      )*
-      < CBRA>    )|
-    (
-      (
-      {
-        action = this.setActionDoElement(action);
-      }
-    )(< DOT>
-	{
-        action = this.setActionDoElement(action);
-      }
-      )*    )
-    
-      )
-  {
-    return action;  }}
-private Action setActionDoElement(Action action) :
-{
-  Token token;
-  Token telltoken;}
-{
-  (    (
-    < REMOVEKNOWLEDGE><OBRA >
-		{
-		  //action.addTask(new RemoveKnowledge(this.getFunctionSignature()));
-		  //action.setRemoveKnowledge(this.getFunctionSignature());		}
-    < CBRA>  )|(
-    < SEND><OBRA >((token=< THIS>)|(< QUESTION>token=< NAME>))< COMMA>	
-		{
-		  Send sendTask;
-		  
-		   sendTask = new Send(null,MessageType.TELL,token.image);
-		   sendTask = this.getSendTask(sendTask);
-		  //action.addTask(sendTask);
-		}
-    < CBRA>
-  )|
-  (
-		< NEWAGENT > < OBRA>< QUESTION>token=< NAME>< CBRA>
-		{
-		  //action.addTask(new NewAgent(token.image));		}
-    )
-  )?
-  {
-    return action;  }}
-private Send getSendTask(Send st):{}
-{
-  (
-    (
-      < TELL><OBRA>
-	{
-	  st.setType(MessageType.TELL);
-        st.setFunctionSignature(this.getFunctionSignature());
-      }
-      <CBRA>     )|
-    (
-      {
-        st.setType(MessageType.OTHER);
-        st.setFunctionSignature(this.getFunctionSignature());      }    )  )
-  {
-    return st;  }}
-private FunctionSignature getFunctionSignature() :
-{
-  FunctionSignature fs = new FunctionSignature();
-  Token token;}
-{
-  (
-    (      (token=< NAME >)|(token=<AGENT_IN>))< OBRA>
-		{
-		  fs.setName(token.image);		}
-		(
-		  (
-		    < QUESTION > token=< NAME >
-		    {		      fs.addVariable(token.image);
-		    }
-		  )
-		  (
-		    < COMMA >< QUESTION > token=< NAME >
-		    {
-		      fs.addVariable(token.image);
-		    }		  )*
-		)?
-    < CBRA >   )
-  {
-    return fs;  }}
-private String getVariable() :
-{
-  String variable = "";
-  Token token;}
-{
-  (
-    < QUESTION > token=< NAME >
-    {
-      variable  = token.image;
-    }
-	)
-  {
-    return variable;  }}
-private Condition getCondition() :
-{
-  Condition condition = new Condition();}
-{
-  (    (
-    <NULL> 
-    { //If its null
-      return condition;    }  )
-  |(
-		< OBRA ><AND ><OBRA >
-						  {
-			  condition.addChildCondition(this.getHasKnowledgeCondition());
-			  
-			}
-		< CBRA ><CBRA >
-		{
-		  return condition;		}
-	  )|
-  (
-	  {
-	    return this.getHasKnowledgeCondition();	  }
-	)
-
-	  )}
-private Condition getHasKnowledgeCondition() :{
-  Condition condition = new Condition();}
-{
-  (
-    <HASKNOWLEDGE><OBRA >
-    {
-      condition.addCondition(this.getFunctionSignature());    }
-    < CBRA >
-      ){
-      return condition;
-    }}
-private Capability setActionConditions(Capability action) :
-{}
-{
-  (    (
-    <HASKNOWLEDGE><OBRA >
-		{
-		  action.addCondition(this.getFunctionSignature());		}
-    < CBRA><SEMICOLON >  )|(
-		< AND>< OBRA>
-			(<HASKNOWLEDGE><OBRA >
-			  {
-			    //action.setConditionLogic(ConditionLogic.AND);
-		  		//action.addCondition(this.getFunctionSignature());
-			}<CBRA>
-			)
-			(< COMMA><HASKNOWLEDGE><OBRA >
-				{
-		  		//action.addCondition(this.getFunctionSignature());
-			}<CBRA>
-			  )+
-		<CBRA ><SEMICOLON >
-    )|< NULL><SEMICOLON >)
-  {
-    return action;  }}
-private KnowledgeCollection getKnowledgeCollection() :{
-  KnowledgeCollection knowledgeCollection = new KnowledgeCollection();
-  Token token;}
-{
-
-		(token=< NAME >< OBRA>	  {
-	  knowledgeCollection.add(this.getKnowledge(token.image));	}
-		
-	< CBRA >< SEMICOLON>)*
-    
-  
-  {
-    return knowledgeCollection;  }}
-
-private Knowledge getKnowledge(String knowledgeName) :
-{
-  Token token;
-  Knowledge knowledge = new Knowledge(knowledgeName);
-  //String knowledgeName = "";}
-{
-  (    token=< NAME>    {
-      knowledge.addParameter(token.image);    }(< COMMA>token=< NAME>    {
-      knowledge.addParameter(token.image);    })*)?
-  {
-    return knowledge;  }}
-
-private Environment addArtifact(Environment env) :
-{
-  Token token;}
-{
-  (
-    < DEFINE_ARTIFACT > token=< NAME>    {
-      Artifact artifact = new Artifact(token.image);
-         }<OCBRA >
-    {
-      artifact.setParent(this.getArtifactParent());
-      artifact.setConnections(this.getArtifactConnections());    }
-
-	{
-	   env.addArtifact(token.image,artifact);	}
-    < CCBRA >  )*
-  {
-    return env;  }}
-private String getArtifactParent():{
-  String parent="";}
-{
-  (
-	  < PARENT> < EQUAL >< OCBRA> (<NULL >|(token=<NAME >
-	  {
-	    parent = token.image;
-	  }))?< CCBRA >
-	)?
-	{
-	  return parent;	}}
-private ArrayList<String> getArtifactConnections():
-{
-  ArrayList<String>  connections= new ArrayList< String>();
-  Token token;
-}
-{
-  (
-	  < CONNECTED_TO> < EQUAL >< OCBRA> (<NULL >|(token=< NAME>	  {
-	    connections.add(token.image);	  }(<COMMA >token=< NAME>{
-	    connections.add(token.image);
-	  })*))?< CCBRA >
-	)?
-	{
-	  return connections;
-	}
-}

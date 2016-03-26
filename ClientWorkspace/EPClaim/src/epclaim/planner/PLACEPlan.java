@@ -4,6 +4,7 @@
  */
 package epclaim.planner;
 
+import epclaim.compiler.FunctionSignature;
 import epclaim.compiler.FunctionSignatureCollection;
 
 /**
@@ -20,7 +21,13 @@ public class PLACEPlan {
 	}
 	@Override
 	public String toString() {
-		return "PLACEPlan [cost=" + cost + ", actionCalls=" + actionCalls + "]";
+		String str = "";
+		for(FunctionSignature fs:actionCalls.getFunctionSignatureCollection())
+		{
+			str+=Float.toString(fs.getStartTime())+": "+fs+" ["+fs.getDuration()+"]"+"\n";
+		}
+		//return "PLACEPlan [cost=" + cost + ", actionCalls=" + actionCalls + "]";
+			return str;
 	}
 	public PLACEPlan(FunctionSignatureCollection actionCalls) {
 		this(actionCalls, 0);

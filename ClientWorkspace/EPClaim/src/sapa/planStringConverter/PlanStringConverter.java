@@ -24,16 +24,13 @@ public class PlanStringConverter implements PlanStringConverterConstants {
   Token token;
   Token floatToken;
   float cost=0;
-    jj_consume_token(PLAN);
-    jj_consume_token(COST);
-    jj_consume_token(COLON);
-    floatToken = jj_consume_token(FLOAT);
-          cost = Float.parseFloat(floatToken.image);
     label_1:
     while (true) {
-      jj_consume_token(OBRA);
-      jj_consume_token(EXCLAMATION);
                   FunctionSignature fs = new FunctionSignature();
+      floatToken = jj_consume_token(FLOAT);
+                  fs.setStartTime(Float.parseFloat(floatToken.image));
+      jj_consume_token(COLON);
+      jj_consume_token(OBRA);
       token = jj_consume_token(NAME);
                   fs.setName(token.image);
       label_2:
@@ -50,26 +47,18 @@ public class PlanStringConverter implements PlanStringConverterConstants {
         }
       }
       jj_consume_token(CBRA);
+      jj_consume_token(OBBRA);
+      floatToken = jj_consume_token(FLOAT);
+                  fs.setDuration(Float.parseFloat(floatToken.image));
+      jj_consume_token(CBBRA);
           collection.add(fs);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case OBRA:
+      case FLOAT:
         ;
         break;
       default:
         jj_la1[1] = jj_gen;
         break label_1;
-      }
-    }
-    label_3:
-    while (true) {
-      jj_consume_token(DASH);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case DASH:
-        ;
-        break;
-      default:
-        jj_la1[2] = jj_gen;
-        break label_3;
       }
     }
           {if (true) return new PLACEPlan(collection,cost);}
@@ -86,13 +75,13 @@ public class PlanStringConverter implements PlanStringConverterConstants {
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[3];
+  static final private int[] jj_la1 = new int[2];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x4000,0x400,0x80,};
+      jj_la1_0 = new int[] {0x10000,0x4000,};
    }
 
   /** Constructor with InputStream. */
@@ -113,7 +102,7 @@ public class PlanStringConverter implements PlanStringConverterConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -127,7 +116,7 @@ public class PlanStringConverter implements PlanStringConverterConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -144,7 +133,7 @@ public class PlanStringConverter implements PlanStringConverterConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -154,7 +143,7 @@ public class PlanStringConverter implements PlanStringConverterConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -170,7 +159,7 @@ public class PlanStringConverter implements PlanStringConverterConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -179,7 +168,7 @@ public class PlanStringConverter implements PlanStringConverterConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -230,12 +219,12 @@ public class PlanStringConverter implements PlanStringConverterConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[17];
+    boolean[] la1tokens = new boolean[19];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 2; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -244,7 +233,7 @@ public class PlanStringConverter implements PlanStringConverterConstants {
         }
       }
     }
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 19; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

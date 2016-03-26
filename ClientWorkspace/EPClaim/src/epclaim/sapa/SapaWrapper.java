@@ -6,11 +6,13 @@ package epclaim.sapa;
 
 import java.io.*;
 
+import sapa.planStringConverter.PlanStringConverter;
 import edu.asu.sapa.Planner;
 import edu.asu.sapa.parsing.Domain;
 import edu.asu.sapa.parsing.PDDL21Parser;
 import edu.asu.sapa.parsing.ParseException;
 import edu.asu.sapa.parsing.Problem;
+import epclaim.planner.PLACEPlan;
 
 
 /**
@@ -77,7 +79,19 @@ public class SapaWrapper {
 			return;
 	    }
 	    sapa.solve(domain, prob);
-	    println("\n\n\n"+sapa.getOrigPlan());
+	    byte[] bytes = sapa.getOrigPlan().getBytes();
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        InputStreamReader isr = new InputStreamReader(bais);
+    PlanStringConverter parser = new PlanStringConverter(isr);
+    PLACEPlan plan;
+	try {
+		plan = parser.getPlan();
+		println("\n\n\n"+plan);
+	} catch (sapa.planStringConverter.ParseException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	    
 	}
 	
 	private void println(String str){

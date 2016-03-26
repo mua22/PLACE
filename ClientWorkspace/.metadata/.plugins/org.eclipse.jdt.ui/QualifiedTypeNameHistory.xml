@@ -11,4 +11,14 @@
 <fullyQualifiedTypeName name="epclaim.compiler.KnowledgeCollection"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="javax.swing.JDialog"/>
+<fullyQualifiedTypeName name="epclaim.planner.PlanNotFoundException"/>
+<fullyQualifiedTypeName name="edu.asu.sapa.Planner"/>
+<fullyQualifiedTypeName name="epclaim.sapa.SapaWrapper"/>
+<fullyQualifiedTypeName name="edu.asu.sapa.lifted.Domain"/>
+<fullyQualifiedTypeName name="edu.asu.sapa.lifted.Problem"/>
+<fullyQualifiedTypeName name="edu.asu.sapa.parsing.PDDL21Parser"/>
+<fullyQualifiedTypeName name="edu.asu.sapa.parsing.Domain"/>
+<fullyQualifiedTypeName name="edu.asu.sapa.parsing.Problem"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="epclaim.compiler.FunctionSignature"/>
 </qualifiedTypeNameHistroy>
