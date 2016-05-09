@@ -5,6 +5,11 @@ import java.util.ArrayList;
 public class Knowledge {
 	private String statement;
 	private ArrayList<String> parameters;
+	
+	/**
+	 * productionTime is used for temporal converter
+	 */
+	private int productionTime = 0;
 
 	public String getStatement() {
 		return statement;
@@ -48,6 +53,42 @@ public class Knowledge {
 	public boolean addParameter(String e) {
 		return this.parameters.add(e);
 	}
-	
+	/*
+	 * Constructor for depe cloning
+	 */
+	public Knowledge(Knowledge knowledge){
+		this(knowledge.getStatement(),knowledge.parameters);
+	}
 
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if(obj.getClass()!=this.getClass())
+			return false;
+		if (obj == this)
+	        return true;
+		Knowledge kno = (Knowledge)obj;
+		if(!this.statement.equals(kno.statement))
+			return false;
+		if(!this.parameters.equals(kno.parameters))
+			return false;
+		return true;
+	}
+
+	/**
+	 * Used in Temporal Planning
+	 * @return the productionTime
+	 */
+	public int getProductionTime() {
+		return productionTime;
+	}
+
+	/**
+	 * Used in Temporal Planning
+	 * @param productionTime the productionTime to set
+	 */
+	public void setProductionTime(int productionTime) {
+		this.productionTime = productionTime;
+	}
+	
 }

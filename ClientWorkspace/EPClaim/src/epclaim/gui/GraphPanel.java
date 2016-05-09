@@ -14,25 +14,34 @@ import com.mxgraph.util.mxEventSource.mxIEventListener;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
+import epclaim.centralsystem.CentralSystem;
+import epclaim.compiler.Agent;
+import epclaim.compiler.PlaceObjectCollection;
+
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Timer;
 public class GraphPanel extends JPanel{
 
 	/**
 	 * Create the panel.
 	 */
+	CentralSystem centralSystem;
 	mxIGraphLayout layout;
 	private final mxGraph graph = new mxGraph();
-	public GraphPanel() {
+	public GraphPanel(CentralSystem cs) {
+		this.centralSystem = cs;
 		setLayout(new BorderLayout(0, 0));
 		this.applyEdgeDefaults();
 		//this.addTestData();
 		//this.addTestData();
-		this.addVertex("V1");
+		/*this.addVertex("V1");
 		this.addVertex("V21");
-		this.addEdge(this.addVertex("V1"), this.addVertex("V21"));
+		this.addEdge(this.addVertex("V1"), this.addVertex("V21"));*/
 		final mxGraphComponent graphComponent = new mxGraphComponent(graph);
 		layout = new mxParallelEdgeLayout(graph);
 		mxFastOrganicLayout layout = new mxFastOrganicLayout(graph);
@@ -58,8 +67,25 @@ public class GraphPanel extends JPanel{
 //	    }
 		layout.execute(graph.getDefaultParent());
 		this.add(graphComponent, BorderLayout.CENTER);
+		int delay = 1000; //milliseconds
+
+		ActionListener taskPerformer = new ActionListener() {
+		  public void actionPerformed(ActionEvent evt) {
+			  setMxGraphForAgents();
+		    //myComponent.repaint();
+		  }
+		};
+
+		new Timer(delay, taskPerformer).start();
 	    
-	    
+	}
+	
+	public void setMxGraphForAgents(){
+		PlaceObjectCollection placeObjects = this.centralSystem.getPlaceObjects();
+		for(Agent agent:placeObjects.getAgentsCollection().getAgentsList()){
+			this.addVertex(agent.getAgentName());
+		}
+		this.repaint();
 	}
 	public void addTestData(){
 		Object parent = graph.getDefaultParent();

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extract method &apos;private KnowledgeCollection processEffectForCall(ArrayList&lt;FunctionSignature&gt; effects)&apos; from &apos;epclaim.planner.PlacePlanAction.getAddEffectsCollection()&apos; to &apos;epclaim.planner.PlacePlanAction&apos;&#x0D;&#x0A;- Original project: &apos;EPClaim&apos;&#x0D;&#x0A;- Method name: &apos;processEffectForCall&apos;&#x0D;&#x0A;- Destination type: &apos;epclaim.planner.PlacePlanAction&apos;&#x0D;&#x0A;- Declared visibility: &apos;private&apos;&#x0D;&#x0A;- Generate method comment" comments="true" description="Extract method &apos;processEffectForCall&apos;" destination="0" exceptions="false" flags="786434" id="org.eclipse.jdt.ui.extract.method" input="/src&lt;epclaim.planner{PlacePlanAction.java" name="processEffectForCall" replace="false" selection="986 601" stamp="1460226146017" version="1.0" visibility="2"/>
+</session>

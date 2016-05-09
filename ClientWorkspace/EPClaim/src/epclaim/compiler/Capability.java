@@ -11,7 +11,7 @@ import epclaim.utils.ConditionLogic;
  * @author Usman
  * Capability in PLACE has two forms one is action and the otherone is activity
  */
-public abstract class Capability implements IPerformable{
+public abstract class Capability{
 
 	protected String name;
 	protected FunctionSignature message;
@@ -95,4 +95,15 @@ public abstract class Capability implements IPerformable{
 	public void setCondition(Condition condition) {
 		this.condition = condition;
 	}
+
+	
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
+
+	
+	
 }

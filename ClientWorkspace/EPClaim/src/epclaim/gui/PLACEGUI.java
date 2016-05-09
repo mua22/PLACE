@@ -23,6 +23,9 @@ import java.io.File;
 import javax.swing.JTextArea;
 import javax.swing.DropMode;
 
+import JSHOP2.JSHOP2;
+import JSHOP2Wrapper.JShop2Planner;
+import epclaim.centralsystem.CentralSystem;
 import epclaim.utils.EpclaimPrefrences;
 
 /**
@@ -89,8 +92,8 @@ public class PLACEGUI {
 		
 		lblSelectedFile = new JLabel("Selected File");
 		panelTop.add(lblSelectedFile);
-		
-		JPanel graphPanel = new GraphPanel();
+		CentralSystem cs = new CentralSystem(new JShop2Planner());
+		JPanel graphPanel = new GraphPanel(cs);
 		frame.getContentPane().add(graphPanel, BorderLayout.CENTER);
 		
 		JPanel panel_south= new JPanel();

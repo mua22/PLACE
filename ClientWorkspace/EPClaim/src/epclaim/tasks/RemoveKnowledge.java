@@ -12,14 +12,7 @@ import epclaim.compiler.FunctionSignature;
  */
 public class RemoveKnowledge extends PrimitiveTask {
 
-	/* (non-Javadoc)
-	 * @see epclaim.tasks.PremitiveTask#perform(epclaim.compiler.Agent)
-	 */
-	@Override
-	public boolean perform(Agent agent) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 	public RemoveKnowledge(FunctionSignature functionSignature) {
 		super(functionSignature);

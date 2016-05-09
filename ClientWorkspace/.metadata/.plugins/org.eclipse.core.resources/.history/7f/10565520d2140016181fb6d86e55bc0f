@@ -1,0 +1,328 @@
+package epclaim.gui;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import java.awt.FlowLayout;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JTree;
+import javax.swing.JLayeredPane;
+import javax.swing.JTextArea;
+import javax.swing.JTabbedPane;
+
+import epclaim.centralsystem.CentralSystem;
+import epclaim.compiler.grammar.ParseException;
+import epclaim.utils.EpclaimPrefrences;
+
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.TreePath;
+
+import JSHOP2Wrapper.JShop2Planner;
+
+public class GUI extends JFrame {
+	private EpclaimPrefrences prefs = new EpclaimPrefrences();
+	private JPanel contentPane;
+	private final Action action = new SwingAction();
+	private TreeFile workingDirectory;
+	private ArrayList<FileEditPanel> fileEditPanels;
+	private JTabbedPane fileEditTabbedPane;
+	private FileTreeModel treeModel;
+	private JTree fileSelectionTree;
+	private GraphPanel panel_graph;
+	
+	private JTextArea consoleTextArea;
+	CentralSystem centralSystem = new CentralSystem(new JShop2Planner());
+	//private GraphPanel graphPanel;
+	protected FileTreeModel getTreeModel() {
+		return treeModel;
+	}
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GUI frame = new GUI();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public GUI() {
+		fileEditPanels = new ArrayList<FileEditPanel>();
+		this.workingDirectory = new TreeFile(prefs.getDefaultFolder());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		
+		JMenuBar topMenuBar = new JMenuBar();
+		setJMenuBar(topMenuBar);
+		
+		JMenu mnFile = new JMenu("File");
+		topMenuBar.add(mnFile);
+		
+		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);
+			}
+		});
+		
+		JMenuItem mntmOpenFolder = new JMenuItem("Open Folder");
+		mntmOpenFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fc = new JFileChooser();
+				//File file = fc.getSelectedFile();
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fc.setDialogTitle("Choose Working Folder");
+				fc.setCurrentDirectory(new File(prefs.getDefaultFolder()));
+				int returnVal = fc.showOpenDialog(GUI.this);
+
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            File file = fc.getSelectedFile();
+		            System.out.println("Directory selected: "+file.getAbsolutePath());
+		            prefs.setDefaultFolder(file.getAbsolutePath());
+		            GUI.this.workingDirectory = new TreeFile(prefs.getDefaultFolder());
+		            //treeModel =  new FileTreeModel(GUI.this.workingDirectory);
+		            GUI.this.treeModel.setRoot(GUI.this.workingDirectory);
+		            SwingUtilities.invokeLater(new Runnable() {
+		            	  @Override public void run() {GUI.this.fileSelectionTree.updateUI(); }
+		            	});
+		            //GUI.this.fileSelectionTree = new JTree(treeModel);
+		            //GUI.this.fileSelectionTree.updateUI();
+		            //this.workingDirectory = new TreeFile(prefs.getDefaultFolder());
+		            //This is where a real application would open the file.
+		            
+		        } else {
+		            //log.append("Open command cancelled by user." + newline);
+		        }
+			}
+		});
+		mnFile.add(mntmOpenFolder);
+		
+		JMenuItem mntmNewFile = new JMenuItem("New File");
+		mntmNewFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser newFileChooser = new JFileChooser();
+				newFileChooser.setCurrentDirectory(GUI.this.getWorkingDirectory());
+				int option = newFileChooser.showSaveDialog(GUI.this);
+				
+				//int option = newFileChooser.APPROVE_OPTION;
+				if(option==newFileChooser.APPROVE_OPTION){
+					File f = newFileChooser.getSelectedFile();
+					if(f.exists()){
+			            int result = JOptionPane.showConfirmDialog(GUI.this, "The file exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+
+			            switch(result){
+			            case JOptionPane.YES_OPTION:
+			            	try {
+			            		f.delete();
+								f.createNewFile();
+								GUI.this.getFileSelectionTree().setModel(GUI.this.getTreeModel());
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+			                //System.out.println(result);
+			                return;
+			            case JOptionPane.NO_OPTION:
+			                return;
+			            case JOptionPane.CLOSED_OPTION:
+			                return;
+			            case JOptionPane.CANCEL_OPTION:
+			                
+			                return;
+			            }
+					}else {
+						try {
+							f.createNewFile();
+							GUI.this.getFileSelectionTree().updateUI();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+			        
+				}
+			}
+		});
+		mnFile.add(mntmNewFile);
+		
+		
+		mnFile.add(mntmExit);
+		
+		JMenu mnRun = new JMenu("Run");
+		topMenuBar.add(mnRun);
+		
+		JMenuItem mntmCompile = new JMenuItem("Compile");
+		mnRun.add(mntmCompile);
+		
+		JMenu mnTools = new JMenu("Tools");
+		topMenuBar.add(mnTools);
+		
+		JMenuItem mntmOptions = new JMenuItem("Options");
+		mnTools.add(mntmOptions);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		
+		JToolBar toolBar = new JToolBar();
+		contentPane.add(toolBar, BorderLayout.NORTH);
+		
+		JPanel panel = new JPanel();
+		toolBar.add(panel);
+		FlowLayout fl_panel = new FlowLayout(FlowLayout.LEFT, 5, 5);
+		fl_panel.setAlignOnBaseline(true);
+		panel.setLayout(fl_panel);
+		
+		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
+		panel.add(tabbedPane_1);
+		
+		JLabel lblServer = new JLabel("TEst");
+		panel.add(lblServer);
+		
+		JButton btnCompile = new JButton("Compile");
+		btnCompile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int index = GUI.this.fileEditTabbedPane.getSelectedIndex();
+				if(index>-1){
+					File file = GUI.this.fileEditPanels.get(index).getFile();
+					try {
+						centralSystem.comileAndRun(file);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else {
+					System.out.println("No File Selected to Run");
+				}
+				
+				
+			}
+		});
+		panel.add(btnCompile);
+		
+		fileSelectionTree = new JTree();
+		fileSelectionTree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent arg0) {
+				TreePath treePath = arg0.getPath();
+				//System.out.println(arg0.getPath());
+				String fileToOpen = GUI.this.getWorkingDirectory().getAbsolutePath();
+				for(int i=1;i<treePath.getPathCount();i++){
+					fileToOpen+="\\"+ treePath.getPathComponent(i).toString();
+				}
+				//System.out.println(fileToOpen);
+				File file = new File(fileToOpen);
+				if(file.isFile()){
+					FileEditPanel editPanel = new FileEditPanel(file);
+					if(!fileEditPanels.contains(editPanel)){
+						fileEditPanels.add(editPanel);
+						GUI.this.getFileEditTabbedPane().addTab(file.getName(), null, editPanel, null);
+						
+					}
+				}
+				
+			}
+		});
+		treeModel = new FileTreeModel(this.workingDirectory);
+		fileSelectionTree.setModel(treeModel);
+		contentPane.add(fileSelectionTree, BorderLayout.WEST);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		contentPane.add(tabbedPane, BorderLayout.CENTER);
+		
+		
+		
+		JPanel panel_working_environment = new JPanel();
+		tabbedPane.addTab("Code Editing", null, panel_working_environment, null);
+		
+		
+		panel_working_environment.setLayout(new BorderLayout(0, 0));
+		panel_graph = new GraphPanel();
+		tabbedPane.addTab("Working Environment", null, panel_graph, null);
+		fileEditTabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		panel_working_environment.add(fileEditTabbedPane,BorderLayout.CENTER);
+		
+		tabbedPane.setSelectedIndex(1);
+		
+		/*JTabbedPane tabbedPaneConsole = new JTabbedPane(JTabbedPane.TOP);
+		contentPane.add(tabbedPaneConsole, BorderLayout.SOUTH);
+		
+		JPanel panel_1 = new JPanel();
+		tabbedPaneConsole.addTab("Console", null, panel_1, null);
+		panel_1.setLayout(new BorderLayout(0, 0));*/
+		
+		consoleTextArea = new JTextArea();
+		consoleTextArea.setRows(10);
+		contentPane.add(consoleTextArea, BorderLayout.SOUTH);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+	}
+
+	public TreeFile getWorkingDirectory() {
+		return workingDirectory;
+	}
+
+	public void setWorkingDirectory(TreeFile workingDirectory) {
+		this.workingDirectory = workingDirectory;
+	}
+
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "SwingAction");
+			putValue(SHORT_DESCRIPTION, "Some short description");
+		}
+		public void actionPerformed(ActionEvent e) {
+		}
+	}
+	protected JTabbedPane getFileEditTabbedPane() {
+		return fileEditTabbedPane;
+	}
+
+	protected JTree getFileSelectionTree() {
+		return fileSelectionTree;
+	}
+
+	protected GraphPanel getPanel_graph() {
+		return panel_graph;
+	}
+	private void printToConsole(String str){
+		
+	}
+}

@@ -1,0 +1,197 @@
+package epclaim.compiler;
+
+import java.util.ArrayList;
+
+import epclaim.exceptions.ActionNotFoundException;
+import epclaim.planner.IPlanner;
+import epclaim.planner.PLACEPlan;
+import epclaim.utils.CommonStringUtils;
+
+public class Agent {
+	/**
+	 * Name of the agent
+	 */
+	private String agentName;
+	private KnowledgeCollection knowledgeCollection;
+	private KnowledgeCollection goalCollection;
+	private Environment environment;
+	private String agent_in="";
+	private ActionCollection actionCollection;
+	private ActivityCollection activityCollection;
+	private IPlanner planner;
+	public String getAgentName() {
+		return agentName;
+	}
+
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
+	}
+	
+	/**
+	 * The name of the artifact
+	 * @return
+	 */
+	public String getAgent_in() {
+		return agent_in;
+	}
+	
+	/**
+	 * Use this method to change the agent's artifact name
+	 * @param agent_in
+	 */
+	public void setAgent_in(String agent_in) {
+		this.agent_in = agent_in;
+	}
+
+	/**
+	 * Returns the action's action collection object
+	 * An Agent'a actions are the collection of its own actions, its artifact's action and the environment's actions
+	 * @return
+	 */
+	public ActionCollection getActionCollection() {
+		ActionCollection collection = new ActionCollection();
+		for(Action action:Environment.getActions().getActions())
+			collection.add(action);
+		for(Action action:this.actionCollection.getActions())
+			collection.add(action);
+		return collection;
+	}
+	
+	public ActivityCollection getActivityCollection() {
+		return activityCollection;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public KnowledgeCollection getKnowledgeCollection() {
+		if(this.knowledgeCollection==null)
+			this.knowledgeCollection = new KnowledgeCollection();
+		ArrayList<String> params = new ArrayList<String>();
+		params.add(this.agent_in);
+		Knowledge agent_inKnowledge = new Knowledge("agent_in",params);
+		
+		this.knowledgeCollection.add(agent_inKnowledge);
+		KnowledgeCollection environmentKnowledge = this.environment.getGlobalKnowledgeCollection();
+		
+		return this.knowledgeCollection.mergeKnowledgeCollection(environmentKnowledge);
+	}
+
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
+
+	public KnowledgeCollection getGoalCollection() {
+		if(this.goalCollection==null)
+			return new KnowledgeCollection();
+		return goalCollection;
+	}
+
+	public void setGoalCollection(KnowledgeCollection goalCollection) {
+		this.goalCollection = goalCollection;
+	}
+
+	public void setKnowledgeCollection(KnowledgeCollection knowledgeCollection) {
+		this.knowledgeCollection = knowledgeCollection;
+	}
+	
+	public void setActionCollection(ActionCollection actionCollection) {
+		this.actionCollection = actionCollection;
+	}
+	public void setActivityCollection(ActivityCollection activityCollection) {
+		this.activityCollection = activityCollection;
+	}
+	public String getName() {
+		return agentName;
+	}
+
+	public void setName(String name) {
+		this.agentName = name;
+	}
+
+	public Agent(String agentName) {
+		super();
+		this.agentName = agentName;
+		this.actionCollection = new ActionCollection();
+		this.activityCollection = new ActivityCollection();
+		this.knowledgeCollection = new KnowledgeCollection();
+	}
+
+	@Override
+	public String toString() {
+		String str=CommonStringUtils.CurlyBraceOpen(true);
+		//str+= "knowledge=" + knowledgeCollection;
+		//str+="actions="+actionCollection;
+		str+="activities="+activityCollection;
+		str+=CommonStringUtils.CurlyBraceClose(true);
+		return this.agentName;
+		//return str;
+		//return "Agent [agentName=" + agentName+"\n Knowledge =" + knowledgeCollection+"\nActions = " + actionCollection;
+	}
+	
+	
+	/**
+	 * Check if the Function Signature matches any Action Call
+	 * @param actionCall
+	 * @return
+	 */
+	public boolean checkActionCall(FunctionSignature actionCall){
+		boolean isCall = false;
+		String fsname = actionCall.getName();
+		
+		ArrayList<Action> acts = this.getActionCollection().getActions();
+		for(int i=0;i<acts.size();i++){
+			Action action = acts.get(i);
+			String actionName = action.getName();
+			if(actionName.equals(fsname))
+				isCall=true;
+		}
+		
+		return isCall;
+	}
+	
+	/**
+	 * get the Action of the agent by its actionCall
+	 * @param actionCall
+	 * @return action
+	 * @throws ActionNotFoundException
+	 */
+	public Action getActionByCall(FunctionSignature actionCall) throws ActionNotFoundException{
+		ActionCollection collection = this.getActionCollection();
+		Action action = null;
+		for(Action act: collection.getActions()){
+			//System.out.println(act.getName()+": Call: "+actionCall.getName());
+			if(act.getName().toLowerCase().equals(actionCall.getName().toLowerCase()))
+				action = act;
+		}
+		if(action==null)
+			throw new ActionNotFoundException();
+		else return action;
+		
+	}
+	
+	/**
+	 * return the deep copy of knowledge collection for processing
+	 * @return knowledge collection 
+	 */
+	public KnowledgeCollection getState(){
+		return new KnowledgeCollection(this.knowledgeCollection);
+	}
+	
+	public void planAndExecute(){
+		PLACEPlan plan = this.planner.getPlan(this);
+	}
+
+	/**
+	 * @param planner the planner to set
+	 */
+	public void setPlanner(IPlanner planner) {
+		this.planner = planner;
+	}
+	
+}

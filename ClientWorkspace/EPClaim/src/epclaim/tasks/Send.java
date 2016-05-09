@@ -32,10 +32,6 @@ public class Send extends PrimitiveTask {
 		return "ActionMessage [uniqueID=" + uniqueID + ", content=" + message
 				+ ", type=" + type + "]";
 	}
-	@Override
-	public boolean perform(Agent agent) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 	
 }

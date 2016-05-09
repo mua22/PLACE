@@ -5,6 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FileUtility {
+	
+	 
+	/**
+	 * Creates the directory if its not already presented
+	 * @param directoryName
+	 */
 	public static void createDire(String directoryName){
 		File theDir = new File(directoryName);
 

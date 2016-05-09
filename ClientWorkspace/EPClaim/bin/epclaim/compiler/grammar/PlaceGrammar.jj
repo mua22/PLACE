@@ -198,8 +198,8 @@ private Action getAction(String actionName) :
   (
    <CONDITION> <EQUAL >
     {
-      //activity = (Activity)this.setActionConditions(activity);
-      action.setCondition(this.getCondition());
+      action = (Action)this.setActionConditions(action);
+      //action.setCondition(this.getCondition());
     }
     <SEMICOLON >  )?
   (
@@ -488,18 +488,18 @@ private Capability setActionConditions(Capability action) :
     < CBRA><SEMICOLON >  )|(
 		< AND>< OBRA>
 			(<HASKNOWLEDGE><OBRA >
-			  {
+			  {action.addCondition(this.getFunctionSignature());
 			    //action.setConditionLogic(ConditionLogic.AND);
 		  		//action.addCondition(this.getFunctionSignature());
 			}<CBRA>
 			)
 			(< COMMA><HASKNOWLEDGE><OBRA >
 				{
-		  		//action.addCondition(this.getFunctionSignature());
+		  		action.addCondition(this.getFunctionSignature());
 			}<CBRA>
 			  )+
-		<CBRA ><SEMICOLON >
-    )|< NULL><SEMICOLON >)
+		<CBRA >
+    )|< NULL>)
   {
     return action;  }}
 private KnowledgeCollection getKnowledgeCollection() :{

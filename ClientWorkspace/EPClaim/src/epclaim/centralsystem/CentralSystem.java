@@ -12,6 +12,7 @@ import epclaim.compiler.PlaceObjectCollection;
 import epclaim.compiler.grammar.ParseException;
 import epclaim.compiler.grammar.PlaceGrammar;
 import epclaim.planner.IPlanner;
+import epclaim.planner.PLACEPlan;
 import epclaim.planner.PlanNotFoundException;
 
 public class CentralSystem {
@@ -19,16 +20,23 @@ public class CentralSystem {
 	private IPlanner planner;
 	private PlaceObjectCollection placeObjects;
 	private PlaceGrammar parser;
+	public static int tickTime = 1500;
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub 
 		CentralSystem cs = new CentralSystem(new JShop2Planner());
 		//String fileName = "F:\\epclaimcodes\\shop2\\casestudyHospital\\hospital.ep";
-		String fileName = "F:\\epclaimcodes\\shop2\\usman\\cleaner.txt";
+		//String fileName = "F:\\epclaimcodes\\shop2\\usman\\cleaner.txt";
+		String fileName = "F:\\epclaimcodes\\shop2\\temporal\\temporal.ep";
 		try {
 			cs.compile(fileName); 
 			for (Agent agent : cs.getPlaceObjects().getAgentsCollection().getAgentsList()) {
 				agent.setEnvironment(cs.getPlaceObjects().getEnvironment());
-				cs.getPlanner().getPlan(agent);
+				agent.setPlanner(cs.getPlanner());
+				agent.planAndExecute();
+				//PLACEPlan plan= cs.getPlanner().getPlan(agent);
+				//plan.setPlacePlanActions();
+				//plan.convertToTemporal();
+				//System.out.println(plan);
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -36,7 +44,7 @@ public class CentralSystem {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (PlanNotFoundException e) {
+		}  catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -54,7 +62,23 @@ public class CentralSystem {
 		placeObjects = parser.compile();
 		System.out.println("Finished Compiling ...");
 	}
-
+	
+	public void compileAndRun(String fileName) throws FileNotFoundException, ParseException{
+		this.compile(fileName); 
+		for (Agent agent : this.getPlaceObjects().getAgentsCollection().getAgentsList()) {
+			agent.setEnvironment(this.getPlaceObjects().getEnvironment());
+			agent.setPlanner(this.getPlanner());
+			agent.planAndExecute();
+			//PLACEPlan plan= cs.getPlanner().getPlan(agent);
+			//plan.setPlacePlanActions();
+			//plan.convertToTemporal();
+			//System.out.println(plan);
+		}
+	}
+	public void comileAndRun(File file) throws FileNotFoundException, ParseException{
+		this.compileAndRun(file.getAbsolutePath());
+	}
+	
 	public PlaceObjectCollection getPlaceObjects() {
 		return placeObjects;
 	}

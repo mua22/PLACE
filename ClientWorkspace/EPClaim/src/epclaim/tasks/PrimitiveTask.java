@@ -24,5 +24,5 @@ public abstract class PrimitiveTask extends Action{
 		moveAgent = new MoveAgentTask();
 		return moveAgent;
 	}	
-	public abstract boolean perform(Agent agent);
+	//public abstract boolean perform(Agent agent);
 }

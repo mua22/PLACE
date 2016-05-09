@@ -1,0 +1,136 @@
+/**
+ * epclaim.planner
+ * 
+ */
+package epclaim.planner;
+
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.ArrayList;
+
+import epclaim.compiler.Action;
+import epclaim.compiler.Agent;
+import epclaim.compiler.FunctionSignature;
+import epclaim.compiler.FunctionSignatureCollection;
+import epclaim.compiler.KnowledgeCollection;
+
+/**
+ * @author Usman
+ *
+ */
+public class PLACEPlan implements Serializable{
+	private float cost;
+	private Agent agent;
+	private FunctionSignatureCollection actionCalls;
+	private ArrayList<PlacePlanAction>  placeActions;
+	private KnowledgeCollection initialState;
+	public PLACEPlan(FunctionSignatureCollection actionCalls, float cost,Agent agent) {
+		super();
+		this.actionCalls = actionCalls;
+		this.cost = cost;
+		this.agent = agent;
+	}
+	
+	/**
+	 * Be Careful to use this constructor as you need to set agent later for post processing of the plan
+	 * @param actionCalls
+	 * @param cost
+	 */
+	public PLACEPlan(FunctionSignatureCollection actionCalls, float cost) {
+		super();
+		this.actionCalls = actionCalls;
+		this.cost = cost;
+		this.agent = null;
+	}
+	@Override
+	public String toString() {
+		String str = "";
+		str+= "Agent: "+agent+"\n";
+		str+=agent.getState()+"\n";
+		if(placeActions==null) str+="Plan Actions Not Set";
+		else {
+			for(PlacePlanAction pAction:this.placeActions)
+				str+=pAction+"\n-------------------------------------------\n";
+		}
+		Writer domainWriter;
+		try{
+		domainWriter = new BufferedWriter(new OutputStreamWriter(
+		          new FileOutputStream("F:\\placeplantest.txt"), "utf-8"));
+		domainWriter.write(str);
+		domainWriter.close();
+		}catch (UnsupportedEncodingException | FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*for(FunctionSignature fs:actionCalls.getFunctionSignatureCollection())
+		{
+			str+=Float.toString(fs.getStartTime())+": "+fs+" ["+fs.getDuration()+"]"+"\n";
+		}*/
+		//return "PLACEPlan [cost=" + cost + ", actionCalls=" + actionCalls + "]";
+			return str;
+	}
+	/**
+	 * 
+	 * @param actionCalls
+	 * @param agent
+	 */
+	public PLACEPlan(FunctionSignatureCollection actionCalls,Agent agent) {
+		this(actionCalls, 0,agent);
+		
+	}
+	/**
+	 * Be Careful to use this constructor as you need to set agent later for post processing of the plan
+	 * @param actionCalls
+	 */
+	public PLACEPlan(FunctionSignatureCollection actionCalls) {
+		this(actionCalls, 0,null);
+		
+	}
+	
+	
+	public void setAgent(Agent agent) {
+		this.agent = agent;
+	}
+	
+	/**
+	 * Sets the PlacePlan Actions
+	 * @throws Exception if the agent is not set
+	 */
+	public void setPlacePlanActions() throws Exception{
+		if(agent==null) throw new Exception("Agent is not set for the plan");
+		placeActions = new ArrayList<PlacePlanAction>();
+		for(FunctionSignature actionCall:this.actionCalls.getFunctionSignatureCollection()){
+			Action action = agent.getActionByCall(actionCall);
+			PlacePlanAction planAction = new PlacePlanAction(actionCall, action);
+			placeActions.add(planAction);
+			
+		}
+	}
+	
+	/**
+	 * Temporal Converter as given on P-73 of the Dr. Adnan Thesis
+	 */
+	public void convertToTemporal(){
+		int startTime = 0;
+		for(PlacePlanAction action:this.placeActions){
+			action.setStartTime(startTime);
+			startTime+=action.getDuration();
+		}
+	}
+
+	private KnowledgeCollection getInitialState() {
+		if(initialState==null)
+			this.initialState = agent.getState();
+		return initialState;
+	}
+	
+}

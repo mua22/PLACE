@@ -39,14 +39,9 @@ public class Activity extends Capability {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
-	/* (non-Javadoc)
-	 * @see epclaim.tasks.IPerformable#perform(epclaim.compiler.Agent)
-	 */
-	@Override
-	public boolean perform(Agent agent) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
+	
+	
 	/**
 	 * @return the actions
 	 */

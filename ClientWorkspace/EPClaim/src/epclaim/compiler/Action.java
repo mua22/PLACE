@@ -1,5 +1,6 @@
 package epclaim.compiler;
 
+import epclaim.tasks.IPerformable;
 import epclaim.tasks.PrimitiveTask;
 import epclaim.utils.ActionType;
 import epclaim.utils.CommonStringUtils;
@@ -10,7 +11,7 @@ import epclaim.utils.ConditionLogic;
  * @author Usman
  *
  */
-public class Action extends Capability {
+public class Action extends Capability implements IPerformable {
 	private ActionType actionType;
 	private int duration=0;
 	private PrimitiveTask moveAgent;
@@ -120,10 +121,19 @@ public class Action extends Capability {
 	/* (non-Javadoc)
 	 * @see epclaim.tasks.IPerformable#perform(epclaim.compiler.Agent)
 	 */
-	@Override
-	public boolean perform(Agent agent) {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public boolean perform(Agent agent,FunctionSignature actionCall) {
+		//System.out.println(this.addEffects);
+		for(FunctionSignature fs:this.deleteEffects.getFunctionSignatureCollection()){
+			Knowledge kno = new Knowledge(fs.getName(), fs.getVariables());
+			agent.removeKnowledge(kno);
+		}
+		for(FunctionSignature fs:this.addEffects.getFunctionSignatureCollection()){
+			Knowledge kno = new Knowledge(fs.getName(), fs.getVariables());
+			agent.addKnowledge(kno);
+		}
+		//System.out.println(agent.getKnowledgeCollection());
+		return true;
 	}
 	protected FunctionSignatureCollection deleteEffects;
 	protected FunctionSignatureCollection addEffects;	

@@ -52,10 +52,11 @@ public class JShop2Planner implements IPlanner{
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         InputStreamReader isr = new InputStreamReader(bais);
         PlanStringConverter parser = new PlanStringConverter(isr);
-        PLACEPlan placePlan = new PLACEPlan(new FunctionSignatureCollection(), 0);
+        PLACEPlan placePlan = new PLACEPlan(new FunctionSignatureCollection(), 0,agent);
         try {
 			placePlan = parser.getPlan();
-			System.out.println(placePlan);
+			placePlan.setAgent(agent);
+			//System.out.println(placePlan);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

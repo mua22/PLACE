@@ -1,6 +1,6 @@
 ;;; Problem Representation for the agent:TVWatcher
 
-(defproblem problem TVWatcher
+(defproblem problem Usman
 	(
 		(tv_placed r2)
 		(tv_status off)

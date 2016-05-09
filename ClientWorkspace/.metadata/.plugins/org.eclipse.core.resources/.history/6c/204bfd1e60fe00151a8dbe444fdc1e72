@@ -1,0 +1,20 @@
+/**
+ * epclaim.planner
+ * 
+ */
+package epclaim.planner;
+
+import epclaim.compiler.Action;
+import epclaim.compiler.FunctionSignature;
+
+/**
+ * @author Usman
+ * holds the Place Action and its call 
+ * The action call is in the form of FunctionSignature 
+ * 
+ */
+public class PlacePlanAction {
+	private FunctionSignature actionCall;
+	private Action action;
+	
+}

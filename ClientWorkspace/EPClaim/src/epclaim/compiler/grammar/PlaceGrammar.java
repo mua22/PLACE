@@ -202,8 +202,9 @@ public class PlaceGrammar implements PlaceGrammarConstants {
     case CONDITION:
       jj_consume_token(CONDITION);
       jj_consume_token(EQUAL);
-      //activity = (Activity)this.setActionConditions(activity);
-      action.setCondition(this.getCondition());
+      action = (Action)this.setActionConditions(action);
+      //action.setCondition(this.getCondition());
+
       jj_consume_token(SEMICOLON);
       break;
     default:
@@ -645,6 +646,9 @@ public class PlaceGrammar implements PlaceGrammarConstants {
       jj_consume_token(OBRA);
       jj_consume_token(HASKNOWLEDGE);
       jj_consume_token(OBRA);
+                           action.addCondition(this.getFunctionSignature());
+                            //action.setConditionLogic(ConditionLogic.AND);
+                                //action.addCondition(this.getFunctionSignature());
 
       jj_consume_token(CBRA);
       label_10:
@@ -652,7 +656,7 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         jj_consume_token(COMMA);
         jj_consume_token(HASKNOWLEDGE);
         jj_consume_token(OBRA);
-
+                                action.addCondition(this.getFunctionSignature());
         jj_consume_token(CBRA);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
@@ -664,11 +668,9 @@ public class PlaceGrammar implements PlaceGrammarConstants {
         }
       }
       jj_consume_token(CBRA);
-      jj_consume_token(SEMICOLON);
       break;
     case NULL:
       jj_consume_token(NULL);
-      jj_consume_token(SEMICOLON);
       break;
     default:
       jj_la1[39] = jj_gen;

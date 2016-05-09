@@ -52,4 +52,12 @@ public class FileTreeModel
 		  // so we don't actually have to keep track of interested listeners
 		  public void addTreeModelListener(TreeModelListener l) {}
 		  public void removeTreeModelListener(TreeModelListener l) {}
+		/**
+		 * @param root the root to set
+		 */
+		public void setRoot(TreeFile root) {
+			this.root = root;
+		}
+		  
+		  
 }

@@ -1,0 +1,220 @@
+/**
+ * epclaim.planner
+ * 
+ */
+package epclaim.planner;
+
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import epclaim.compiler.Action;
+import epclaim.compiler.Agent;
+import epclaim.compiler.FunctionSignature;
+import epclaim.compiler.FunctionSignatureCollection;
+import epclaim.compiler.Knowledge;
+import epclaim.compiler.KnowledgeCollection;
+
+/**
+ * @author Usman
+ *
+ */
+public class PLACEPlan implements Serializable{
+	private float cost;
+	private Agent agent;
+	private FunctionSignatureCollection actionCalls;
+	private ArrayList<PlacePlanAction>  placeActions;
+	/**
+	 * Initial State of the agent
+	 */
+	//private KnowledgeCollection initialState;
+	public PLACEPlan(FunctionSignatureCollection actionCalls, float cost,Agent agent) {
+		super();
+		this.actionCalls = actionCalls;
+		this.cost = cost;
+		this.agent = agent;
+	}
+	
+	/**
+	 * Be Careful to use this constructor as you need to set agent later for post processing of the plan
+	 * @param actionCalls
+	 * @param cost
+	 */
+	public PLACEPlan(FunctionSignatureCollection actionCalls, float cost) {
+		super();
+		this.actionCalls = actionCalls;
+		this.cost = cost;
+		this.agent = null;
+	}
+	@Override
+	public String toString() {
+		String str = "";
+		str+= "Agent: "+agent+"\n";
+		str+=agent.getState()+"\n";
+		if(placeActions==null) str+="Plan Actions Not Set";
+		else {
+			for(PlacePlanAction pAction:this.placeActions)
+				str+=pAction+"\n-------------------------------------------";
+			//this.convertToTemporal();
+			this.temporalConverter();
+			str+="\n------------AFTER TEMPORAL CONVERSION-----------\n";
+			for(PlacePlanAction pAction:this.placeActions)
+				str+=pAction+"\n-------------------------------------------";
+		}
+		Writer domainWriter;
+		try{
+		domainWriter = new BufferedWriter(new OutputStreamWriter(
+		          new FileOutputStream("F:\\placeplantest.txt"), "utf-8"));
+		domainWriter.write(str);
+		domainWriter.close();
+		}catch (UnsupportedEncodingException | FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*for(FunctionSignature fs:actionCalls.getFunctionSignatureCollection())
+		{
+			str+=Float.toString(fs.getStartTime())+": "+fs+" ["+fs.getDuration()+"]"+"\n";
+		}*/
+		//return "PLACEPlan [cost=" + cost + ", actionCalls=" + actionCalls + "]";
+			return str;
+	}
+	/**
+	 * 
+	 * @param actionCalls
+	 * @param agent
+	 */
+	public PLACEPlan(FunctionSignatureCollection actionCalls,Agent agent) {
+		this(actionCalls, 0,agent);
+		
+	}
+	/**
+	 * Be Careful to use this constructor as you need to set agent later for post processing of the plan
+	 * @param actionCalls
+	 */
+	public PLACEPlan(FunctionSignatureCollection actionCalls) {
+		this(actionCalls, 0,null);
+		
+	}
+	
+	
+	public void setAgent(Agent agent) {
+		this.agent = agent;
+	}
+	
+	/**
+	 * Sets the PlacePlan Actions
+	 * @throws Exception if the agent is not set
+	 */
+	public void setPlacePlanActions() throws Exception{
+		if(agent==null) throw new Exception("Agent is not set for the plan");
+		placeActions = new ArrayList<PlacePlanAction>();
+		for(FunctionSignature actionCall:this.actionCalls.getFunctionSignatureCollection()){
+			Action action = agent.getActionByCall(actionCall);
+			PlacePlanAction planAction = new PlacePlanAction(actionCall, action);
+			placeActions.add(planAction);
+			
+		}
+		//this.temporalConverter();
+	}
+	
+	public ArrayList<PlacePlanAction> temporalConverter(){
+		ArrayList<Knowledge> I = this.getInitialState().getCollection(); //The Initial State
+		ArrayList<PlacePlanAction> temporalActions = new ArrayList<PlacePlanAction>();
+		PlacePlanAction P1 = this.placeActions.get(0); //get P1(First Action) to set its start time to 0
+		P1.setStartTime(0);
+		//line 3-5 set production Time of First Action's Add Effects
+		for(int j=0;j<P1.getAddEffectsCollection().getCollection().size();j++)
+			P1.getAddEffectsCollection().getCollection().get(j).setProductionTime( (int)P1.getEndTime());
+		for(int i=1;i<this.placeActions.size();i++){ //line 6
+			
+		}
+		
+		this.placeActions = temporalActions;
+		return this.placeActions;
+	}
+	/**
+	 * I, P and D,
+	 * where I is the initial state, P is the total order plan which is to be converted
+	 *	and D is the domain description file which is needed to extract the information
+	 *	about the durations of all the actions. 
+	 * Temporal Converter as given on P-73 of the Dr. Adnan Thesis
+	 * @return 
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<PlacePlanAction> convertToTemporal(){
+		int startTime = 0; //The start time of the first Action
+		ArrayList<Knowledge> state = this.getInitialState().getCollection(); //I which is the initial state
+		ArrayList<PlacePlanAction> temporalActions = new ArrayList<PlacePlanAction>(); 
+		temporalActions.add(this.placeActions.get(0)); //Place the first Action as it is
+		float MaxT = temporalActions.get(0).getEndTime();
+		
+		for(int i=1;i<placeActions.size();i++){//loop for each action	for i = 2 to |P | do
+			PlacePlanAction action = placeActions.get(i);
+			float MaxTForAction = MaxT;
+			
+			float PreT = 0;
+			float MinOrderingT = PreT;
+			//Collections.sort(temporalActions);
+			//see if the initialState satisfies the Conditions
+			if(state.containsAll(action.getConditionsCollection().getCollection())){
+				PreT = 0;
+				MinOrderingT = PreT;
+				//break;
+			}else { //set the PreT to the endTime of the action where its conditions are met
+				for(int index=0;index<temporalActions.size();index++){
+					PlacePlanAction actiontoExecute = temporalActions.get(index);
+					state.removeAll(actiontoExecute.getDeleteEffectsCollection().getCollection());
+					state.addAll(actiontoExecute.getAddEffectsCollection().getCollection());
+					if(state.containsAll(action.getConditionsCollection().getCollection())){
+						PreT = action.getEndTime();
+						MinOrderingT = PreT;
+						break;
+					}
+				}// end for loop for recondition achieving time
+			}//end else for if initial condition meet conditions
+			
+			//Checking for causal link threat
+			for(int index=0;index<temporalActions.size();index++){
+				PlacePlanAction actionToCheck = temporalActions.get(index);
+				for(Knowledge delKnowledge:actionToCheck.getDeleteEffectsCollection().getCollection()){
+					if(action.getConditionsCollection().getCollection().contains(delKnowledge))
+						if(PreT<actionToCheck.getEndTime()){
+							PreT = actionToCheck.getEndTime();
+							MinOrderingT = PreT;
+						}
+						
+				}
+			}// end For Loop for checking if causal link threat
+			action.setStartTime(PreT);
+			temporalActions.add(action);
+			
+		}
+		this.placeActions = temporalActions;
+		return this.placeActions;
+	}
+	
+	/**
+	 * Creates and return the deep copy of the Initial State of the agent 
+	 * to simulate the execution for temporal converter
+	 * @return
+	 */
+	private KnowledgeCollection getInitialState() {			
+		KnowledgeCollection initialState = new KnowledgeCollection();
+			for(Knowledge kno:agent.getState().getCollection()){
+				initialState.add(new Knowledge(kno));
+			}
+		
+		return initialState;
+	}
+	
+}

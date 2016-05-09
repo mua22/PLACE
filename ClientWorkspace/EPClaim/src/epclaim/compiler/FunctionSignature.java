@@ -8,6 +8,7 @@ public class FunctionSignature {
  private float startTime = 0;
  private ArrayList<String> variables;
  
+
 public FunctionSignature() {
 	super();
 	variables = new ArrayList<String>();
@@ -46,6 +47,12 @@ public String toString() {
 	
 	return this.toString(false);
 }
+
+/**
+ * Do to Modify it as it is being used in JSHOP2 file generation
+ * @param isActionCall
+ * @return
+ */
 public String toString(boolean isActionCall){
 	String str="";
 	if(isActionCall)
@@ -71,5 +78,21 @@ public float getStartTime() {
 }
 public void setStartTime(float startTime) {
 	this.startTime = startTime;
-} 
+}
+@Override
+public boolean equals(Object obj) {
+	if (!(obj instanceof FunctionSignature))
+        return false;
+    if (obj == this)
+        return true;
+    FunctionSignature fs = (FunctionSignature)obj;
+    if(!this.name.equals(fs.name))
+    	return false;
+    if(!this.variables.equals(fs.variables))
+    	return false;
+    return true;
+}
+public float getEndTime(){
+	return startTime+duration;
+}
 }

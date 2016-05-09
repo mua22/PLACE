@@ -14,11 +14,7 @@ public class NewAgent extends PrimitiveTask {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public boolean perform(Agent agent) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 	@Override
 	public String toString() {

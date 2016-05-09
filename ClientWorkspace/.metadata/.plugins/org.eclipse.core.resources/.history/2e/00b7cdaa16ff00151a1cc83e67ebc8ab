@@ -1,0 +1,120 @@
+/**
+ * epclaim.planner
+ * 
+ */
+package epclaim.planner;
+
+import java.util.ArrayList;
+
+import epclaim.compiler.Action;
+import epclaim.compiler.FunctionSignature;
+import epclaim.compiler.Knowledge;
+import epclaim.compiler.KnowledgeCollection;
+
+/**
+ * @author Usman
+ * holds the Place Action and its call 
+ * The action call is in the form of FunctionSignature 
+ * 
+ */
+public class PlacePlanAction implements Comparable{
+	private FunctionSignature actionCall;
+	private Action action;
+	/**
+	 * @param actionCall
+	 * @param action
+	 */
+	public PlacePlanAction(FunctionSignature actionCall, Action action) {
+		super();
+		this.actionCall = actionCall;
+		this.action = action;
+		this.actionCall.setDuration(this.action.getDuration());
+	}
+	
+	/**
+	 * process the call on action and return the add effects
+	 * @return
+	 */
+	public KnowledgeCollection getAddEffectsCollection(){
+		ArrayList<FunctionSignature> effects = action.getAddEffects().getFunctionSignatureCollection();
+		KnowledgeCollection collection = processEffectForCall(effects);
+		return collection;
+	}
+	public KnowledgeCollection getDeleteEffectsCollection(){
+		ArrayList<FunctionSignature> effects = action.getDeleteEffects().getFunctionSignatureCollection();
+		KnowledgeCollection collection = processEffectForCall(effects);
+		return collection;
+	}
+	public KnowledgeCollection getConditionsCollection(){
+		ArrayList<FunctionSignature> effects = action.getConditions().getFunctionSignatureCollection();
+		KnowledgeCollection collection = processEffectForCall(effects);
+		return collection;
+	}
+	/**
+	 * @param effects
+	 * @return
+	 */
+	private KnowledgeCollection processEffectForCall(
+			ArrayList<FunctionSignature> effects) {
+		KnowledgeCollection collection = new KnowledgeCollection();
+		ArrayList<String> actionParams = action.getMessage().getVariables();
+		for(FunctionSignature addEffect:effects){			
+			ArrayList<String> parameters = new ArrayList<String>();
+			ArrayList<String> addEffectParams = addEffect.getVariables();
+			for(int i=0;i<addEffectParams.size();i++){
+				String param = addEffectParams.get(i);
+				if(!param.startsWith("?"))
+					parameters.add(param);
+				else 
+					{
+					parameters.add(this.actionCall.getVariables().get(actionParams.indexOf(param)));
+					
+					}
+			}
+			collection.add(new Knowledge(addEffect.getName(), parameters));
+		}
+		return collection;
+	}
+	@Override
+	public String toString() {
+		String str = "";
+		str+= "s:"+actionCall.getStartTime()+" e:"+actionCall.getEndTime()+" "+ actionCall.toString() + " " + actionCall.getDuration();
+		str+="\nConditions: " + this.getConditionsCollection();
+		str+="\nAdd: " + this.getAddEffectsCollection();
+		str+="\nRemove: " + this.getDeleteEffectsCollection();
+		return str; 
+	}
+
+	/**
+	 * @return
+	 * @see epclaim.compiler.FunctionSignature#getDuration()
+	 */
+	public float getDuration() {
+		return actionCall.getDuration();
+	}
+
+	/**
+	 * @return
+	 * @see epclaim.compiler.FunctionSignature#getStartTime()
+	 */
+	public float getStartTime() {
+		return actionCall.getStartTime();
+	}
+
+	/**
+	 * @param startTime
+	 * @see epclaim.compiler.FunctionSignature#setStartTime(float)
+	 */
+	public void setStartTime(float startTime) {
+		actionCall.setStartTime(startTime);
+	}
+
+	/**
+	 * @return
+	 * @see epclaim.compiler.FunctionSignature#getEndTime()
+	 */
+	public float getEndTime() {
+		return actionCall.getEndTime();
+	}
+	
+}

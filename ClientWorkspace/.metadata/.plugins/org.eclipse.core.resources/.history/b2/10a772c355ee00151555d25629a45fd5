@@ -1,44 +1,0 @@
-/**
- * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = true;}PARSER_BEGIN(PlanStringConverter)package JSHOP2Wrapper.planStringConverter;
-
-import epclaim.compiler.*;
-import epclaim.utils.*;
-import java.util.ArrayList;
-import epclaim.tasks.*;
-import java.io.*;
-public class PlanStringConverter{  public static void main(String args []) throws ParseException  {
-    String test = "Plan cost: 3.0 (!op_move r1 r2) (!op_turnontv r2) (!op_watchtv r2) --------------------";
-	byte[] bytes = test.getBytes();
-	ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-	InputStreamReader isr = new InputStreamReader(bais);    PlanStringConverter parser = new PlanStringConverter(isr);
-    PLACEPlan plan = parser.getPlan();
-    System.out.println(plan);    }}PARSER_END(PlanStringConverter)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLAN : "Plan" >| < COST : "cost" >
-| < DASH : "-" >| < EXCLAMATION : "!" >
-| < COLON: ":" >| < OBRA : "(" >
-| < CBRA : ")" >
-| < FLOAT: (["0"-"9"])+"."(["0"-"9"])+>
-| <NAME :["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* > }TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}public PLACEPlan getPlan() :{
-  FunctionSignatureCollection collection = new FunctionSignatureCollection();
-  Token token;
-  Token floatToken;
-  float cost=0.0;}
-
-{
-  	(< PLAN ><COST ><COLON ><FLOAT >
-  	(  	  <OBRA >
-		< EXCLAMATION >
-		{
-		  FunctionSignature fs = new FunctionSignature();		}
-		(token=< NAME>)		{
-		  fs.setName(token.image);
-		} (token=< NAME> {
-		      fs.addVariable(token.image);
-		    })+ 
-  	<CBRA >
-	{
-	  collection.add(fs);	}
-  	)+ (< DASH>)+
-	)
-	{
-	  return collection;	}}

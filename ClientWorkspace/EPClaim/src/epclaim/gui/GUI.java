@@ -20,9 +20,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import java.awt.FlowLayout;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -33,6 +35,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTabbedPane;
 
 import epclaim.centralsystem.CentralSystem;
+import epclaim.compiler.grammar.ParseException;
 import epclaim.utils.EpclaimPrefrences;
 
 import javax.swing.event.TreeSelectionListener;
@@ -51,6 +54,8 @@ public class GUI extends JFrame {
 	private FileTreeModel treeModel;
 	private JTree fileSelectionTree;
 	private GraphPanel panel_graph;
+	
+	private JTextArea consoleTextArea;
 	CentralSystem centralSystem = new CentralSystem(new JShop2Planner());
 	//private GraphPanel graphPanel;
 	protected FileTreeModel getTreeModel() {
@@ -110,7 +115,13 @@ public class GUI extends JFrame {
 		            System.out.println("Directory selected: "+file.getAbsolutePath());
 		            prefs.setDefaultFolder(file.getAbsolutePath());
 		            GUI.this.workingDirectory = new TreeFile(prefs.getDefaultFolder());
-		            treeModel =  new FileTreeModel(GUI.this.workingDirectory);
+		            //treeModel =  new FileTreeModel(GUI.this.workingDirectory);
+		            GUI.this.treeModel.setRoot(GUI.this.workingDirectory);
+		            SwingUtilities.invokeLater(new Runnable() {
+		            	  @Override public void run() {GUI.this.fileSelectionTree.updateUI(); }
+		            	});
+		            //GUI.this.fileSelectionTree = new JTree(treeModel);
+		            //GUI.this.fileSelectionTree.updateUI();
 		            //this.workingDirectory = new TreeFile(prefs.getDefaultFolder());
 		            //This is where a real application would open the file.
 		            
@@ -207,7 +218,23 @@ public class GUI extends JFrame {
 		JButton btnCompile = new JButton("Compile");
 		btnCompile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//
+				int index = GUI.this.fileEditTabbedPane.getSelectedIndex();
+				if(index>-1){
+					File file = GUI.this.fileEditPanels.get(index).getFile();
+					try {
+						centralSystem.comileAndRun(file);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						GUI.this.printToConsole(e.getMessage());
+					} catch (ParseException e) {
+						GUI.this.printToConsole(e.getMessage());
+						e.printStackTrace();
+					}
+				}else {
+					GUI.this.printToConsole("No File Selected");
+				}
+				
+				
 			}
 		});
 		panel.add(btnCompile);
@@ -248,23 +275,23 @@ public class GUI extends JFrame {
 		
 		
 		panel_working_environment.setLayout(new BorderLayout(0, 0));
-		panel_graph = new GraphPanel();
+		panel_graph = new GraphPanel(this.centralSystem);
 		tabbedPane.addTab("Working Environment", null, panel_graph, null);
 		fileEditTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		panel_working_environment.add(fileEditTabbedPane,BorderLayout.CENTER);
 		
 		tabbedPane.setSelectedIndex(1);
 		
-		JTabbedPane tabbedPaneConsole = new JTabbedPane(JTabbedPane.TOP);
+		/*JTabbedPane tabbedPaneConsole = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPaneConsole, BorderLayout.SOUTH);
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPaneConsole.addTab("Console", null, panel_1, null);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		panel_1.setLayout(new BorderLayout(0, 0));*/
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setRows(10);
-		panel_1.add(textArea);
+		consoleTextArea = new JTextArea();
+		consoleTextArea.setRows(10);
+		contentPane.add(consoleTextArea, BorderLayout.SOUTH);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 
@@ -295,5 +322,7 @@ public class GUI extends JFrame {
 	protected GraphPanel getPanel_graph() {
 		return panel_graph;
 	}
-	
+	public void printToConsole(String str){
+		consoleTextArea.append(str);
+	}
 }

@@ -35,5 +35,12 @@ public class FileEditPanel extends JPanel {
 		FileEditPanel newEditPanel =  (FileEditPanel)arg0;
 		return this.file.equals(newEditPanel.file);
 	}
+	/**
+	 * @return the file
+	 */
+	public File getFile() {
+		return file;
+	}
+	
 	
 }

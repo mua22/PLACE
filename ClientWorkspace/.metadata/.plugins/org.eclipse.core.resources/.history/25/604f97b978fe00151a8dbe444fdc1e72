@@ -1,0 +1,34 @@
+/**
+ * epclaim.planner
+ * 
+ */
+package epclaim.planner;
+
+import epclaim.compiler.Action;
+import epclaim.compiler.FunctionSignature;
+
+/**
+ * @author Usman
+ * holds the Place Action and its call 
+ * The action call is in the form of FunctionSignature 
+ * 
+ */
+public class PlacePlanAction {
+	private FunctionSignature actionCall;
+	private Action action;
+	/**
+	 * @param actionCall
+	 * @param action
+	 */
+	public PlacePlanAction(FunctionSignature actionCall, Action action) {
+		super();
+		this.actionCall = actionCall;
+		this.action = action;
+		this.actionCall.setDuration(this.action.getDuration());
+	}
+	@Override
+	public String toString() {
+		return "s:"+actionCall.getStartTime()+" e:"+actionCall.getEndTime()+" "+ actionCall.toString() + " " + actionCall.getDuration();
+	}
+	
+}

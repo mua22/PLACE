@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<item value="2" key="TypeHierarchyViewPart.hierarchyview"/>
 	<item value="F:\sapa" key="org.eclipse.jdt.ui.lastextjar"/>
 	<item value="500" key="CallHierarchyViewPart.ratio3"/>
 	<item value="500" key="CallHierarchyViewPart.ratio1"/>
 	<item value="3" key="CallHierarchyViewPart.orientation"/>
+	<item value="false" key="TypeHierarchyViewPart.qualifiednames"/>
+	<item value="3" key="TypeHierarchyViewPart.orientation"/>
 	<item value="1" key="SearchScopeActionGroup.search_scope_type"/>
 	<item value="2" key="CallHierarchyViewPart.field_mode"/>
+	<item value="false" key="TypeHierarchyViewPart.linkeditors"/>
 	<item value="0" key="CallHierarchyViewPart.call_mode"/>
 	<list key="SearchScopeActionGroup.working_set">
 	</list>
@@ -52,7 +56,7 @@
 		<item value="10" key="LimitValue"/>
 		<item value="0" key="ToStringTemplateSelected"/>
 		<item value="0" key="StringStyle"/>
-		<item value="1" key="VisibilityModifier"/>
+		<item value="2" key="VisibilityModifier"/>
 		<item value="false" key="Comments"/>
 		<item value="false" key="LimitElements"/>
 		<item value="false" key="SynchronizedModifier"/>
