@@ -3,13 +3,23 @@
 (defdomain Usman	(
 
 		(:method (watch  ?c)
-		((agent_in r2))
-		((!OP_watchTV r2))
+		((and(agent_in ?c)(tv_status off)))
+		((!OP_TurnOnTv ?c)(!OP_watchTV ?c)(!OP_TurnOffTv ?c))
 		)
 
 		(:method (watch  ?c)
-		((and(agent_in ?a)(tv_placed ?c)(tv_status off)))
-		((!OP_move ?a ?c)(!OP_TurnOnTv ?c)(watch ?b))
+		((and(agent_in ?a)(tv_placed ?c)))
+		((!OP_move ?a ?c)(watch ?c))
+		)
+
+		(:method (clean  ?c)
+		((and(agent_in ?c)(dirty ?c)))
+		((!OP_cleanRoom ?c))
+		)
+
+		(:method (clean  ?c)
+		((and(agent_in ?a)(dirty ?c)))
+		((!OP_move ?a ?c)(clean ?c))
 		)
 
 		(:operator (!OP_move  ?a ?b)
@@ -19,15 +29,27 @@
 		)
 
 		(:operator (!OP_watchTV  ?c)
-		((and(agent_in r2)(tv_status on))) ;;PreConditions
+		() ;;PreConditions
 		() ;;Delete Effects
 		((watching  tv)) ;;Add Effects
 		)
 
 		(:operator (!OP_TurnOnTv  ?c)
-		((and(agent_in r2)(tv_status off))) ;;PreConditions
+		() ;;PreConditions
 		((tv_status  off)) ;;Delete Effects
 		((tv_status  on)) ;;Add Effects
+		)
+
+		(:operator (!OP_TurnOffTv  ?c)
+		() ;;PreConditions
+		((tv_status  on)) ;;Delete Effects
+		((tv_status  off)) ;;Add Effects
+		)
+
+		(:operator (!OP_cleanRoom  ?c)
+		() ;;PreConditions
+		((dirty  ?c)) ;;Delete Effects
+		((clean  ?c)) ;;Add Effects
 		)
 	)
 

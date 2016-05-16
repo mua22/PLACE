@@ -1,10 +1,13 @@
 package epclaim.gui;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.layout.mxOrganicLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxMorphing;
 import com.mxgraph.util.mxConstants;
@@ -16,6 +19,7 @@ import com.mxgraph.view.mxStylesheet;
 
 import epclaim.centralsystem.CentralSystem;
 import epclaim.compiler.Agent;
+import epclaim.compiler.Artifact;
 import epclaim.compiler.PlaceObjectCollection;
 
 import java.awt.BorderLayout;
@@ -23,8 +27,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.Timer;
+import javax.swing.border.Border;
 public class GraphPanel extends JPanel{
 
 	/**
@@ -32,42 +38,19 @@ public class GraphPanel extends JPanel{
 	 */
 	CentralSystem centralSystem;
 	mxIGraphLayout layout;
-	private final mxGraph graph = new mxGraph();
+	private mxGraph graph;
+	int delay = 2000; //milliseconds
+	/**
+	 * Jpanel to hold the graph
+	 */
+	private JPanel graphComponentPanel;
 	public GraphPanel(CentralSystem cs) {
 		this.centralSystem = cs;
 		setLayout(new BorderLayout(0, 0));
-		this.applyEdgeDefaults();
-		//this.addTestData();
-		//this.addTestData();
-		/*this.addVertex("V1");
-		this.addVertex("V21");
-		this.addEdge(this.addVertex("V1"), this.addVertex("V21"));*/
-		final mxGraphComponent graphComponent = new mxGraphComponent(graph);
-		layout = new mxParallelEdgeLayout(graph);
-		mxFastOrganicLayout layout = new mxFastOrganicLayout(graph);
-		layout.setForceConstant(100);
-//	    // layout using morphing
-//	    graph.getModel().beginUpdate();
-//	    try {
-//	        layout.execute(graph.getDefaultParent());
-//	    } finally {
-//	        mxMorphing morph = new mxMorphing(graphComponent,40, 1.2, 40);
-//
-//	        morph.addListener(mxEvent.DONE, new mxIEventListener() {
-//
-//	            @Override
-//	            public void invoke(Object arg0, mxEventObject arg1) {
-//	                graph.getModel().endUpdate();
-//	                // fitViewport();
-//	            }
-//
-//	        });
-//
-//	        morph.startAnimation(); 
-//	    }
-		layout.execute(graph.getDefaultParent());
-		this.add(graphComponent, BorderLayout.CENTER);
-		int delay = 1000; //milliseconds
+		this.setLayout(new BorderLayout());
+		graphComponentPanel = new JPanel();
+		this.add(graphComponentPanel, BorderLayout.CENTER);
+		
 
 		ActionListener taskPerformer = new ActionListener() {
 		  public void actionPerformed(ActionEvent evt) {
@@ -80,12 +63,63 @@ public class GraphPanel extends JPanel{
 	    
 	}
 	
+	
 	public void setMxGraphForAgents(){
-		PlaceObjectCollection placeObjects = this.centralSystem.getPlaceObjects();
-		for(Agent agent:placeObjects.getAgentsCollection().getAgentsList()){
-			this.addVertex(agent.getAgentName());
-		}
+		graph = new mxGraph();
+this.applyEdgeDefaults();
+		this.removeAll();
 		this.repaint();
+		final mxGraphComponent graphComponent = new mxGraphComponent(graph);
+		
+		//layout = new mxParallelEdgeLayout(graph);
+		
+		//layout.setForceConstant(100);
+//	    		layout.execute(graph.getDefaultParent());
+		graphComponentPanel = new JPanel();
+		graphComponentPanel.setLayout(new BorderLayout());
+		graphComponentPanel.add(graphComponent, BorderLayout.CENTER);
+		this.add(graphComponentPanel,BorderLayout.CENTER);
+		JLabel descriptionMessage = new JLabel("PLACE Environment");
+		this.add(descriptionMessage, BorderLayout.SOUTH);
+		//mxFastOrganicLayout layout = new mxFastOrganicLayout(graph);
+		
+		mxIGraphModel model = graph.getModel();
+		Random rand = new Random();
+		int i = rand.nextInt(10);
+		/*for(int index = 0;index<i;index++)
+			this.addVertex("C"+Integer.toString(index));*/
+		updateGraphWithPlaceObjects();
+		Object cell = graph.getDefaultParent();
+		layout = new mxOrganicLayout(graph);
+		graph.getModel().beginUpdate();
+		try {
+			layout.execute(cell);
+		} finally {
+			graph.getModel().endUpdate();
+		}
+		//this.repaint();
+		this.getParent().repaint();
+		
+		//this.repaint();
+	}
+
+
+	/**
+	 * 
+	 */
+	private void updateGraphWithPlaceObjects() {
+		try {
+			PlaceObjectCollection placeObjects = this.centralSystem.getPlaceObjects();
+			for(Agent agent:placeObjects.getAgentsCollection().getAgentsList()){
+				this.addVertex(agent.getAgentName());
+			}
+			for(Artifact artifact:placeObjects.getEnvironment().getArtifacts().values()){
+				this.addVertex(artifact.getArtifactName());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public void addTestData(){
 		Object parent = graph.getDefaultParent();
@@ -127,7 +161,7 @@ public class GraphPanel extends JPanel{
 		graph.getModel().beginUpdate();
 		try
 		{
-		   return graph.insertVertex(parent, null, str, 20, 20, 80,
+		   return graph.insertVertex(parent, str, str, 20, 20, 80,
 		         30);
 		   
 		}

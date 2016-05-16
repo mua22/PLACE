@@ -4,13 +4,17 @@
 	(
 		(tv_placed r2)
 		(tv_status off)
-		(agent_in r1)
+		(dirty r1)
+		(dirty r2)
+		(agent_in r2)
 		(connected r1 r2)
 		(connected r2 r1)
 	)
 	(
 		(
 			(watch r2)
+			(clean r2)
+			(clean r1)
 		)
 	)
 
