@@ -110,15 +110,17 @@ this.applyEdgeDefaults();
 	private void updateGraphWithPlaceObjects() {
 		try {
 			PlaceObjectCollection placeObjects = this.centralSystem.getPlaceObjects();
-			for(Agent agent:placeObjects.getAgentsCollection().getAgentsList()){
-				this.addVertex(agent.getAgentName());
-			}
 			for(Artifact artifact:placeObjects.getEnvironment().getArtifacts().values()){
 				this.addVertex(artifact.getArtifactName());
 			}
+			for(Agent agent:placeObjects.getAgentsCollection().getAgentsList()){
+				this.addVertex(agent.getAgentName());
+				this.addEdge(agent.getName(), agent.getAgent_in());
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	public void addTestData(){
