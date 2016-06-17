@@ -15,12 +15,15 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import JSHOP2Wrapper.JShop2Planner;
+import epclaim.centralsystem.CentralSystem;
 import epclaim.compiler.Action;
 import epclaim.compiler.Agent;
 import epclaim.compiler.FunctionSignature;
 import epclaim.compiler.FunctionSignatureCollection;
 import epclaim.compiler.Knowledge;
 import epclaim.compiler.KnowledgeCollection;
+import epclaim.compiler.grammar.ParseException;
 
 /**
  * @author Usman
@@ -134,21 +137,74 @@ public class PLACEPlan implements Serializable{
 		P1.setStartTime(0);
 		temporalActions.add(P1);
 		//line 3-5 set production Time of First Action's Add Effects
-		for(int j=0;j<P1.getAddEffectsCollection().getCollection().size();j++)
-			P1.getAddEffectsCollection().getCollection().get(j).setProductionTime( (int)P1.getEndTime());
+		int p1EndTime = (int)P1.getEndTime();
+		ArrayList<Knowledge> p1AddEffects = P1.getAddEffectsCollection().getCollection();
+		for(int j=0;j<p1AddEffects.size();j++){
+			p1AddEffects.get(j).setProductionTime(p1EndTime); //set the production time for all the add effects to be the end of the first action. 
+			
+		}
+		I.addAll(p1AddEffects);	
 		for(int i=1;i<this.placeActions.size();i++){ //line 6
 			int MaxT = 0; 
+			int PreT = 0;
 			PlacePlanAction Pi = this.placeActions.get(i); //ithAction
 			for(int k=0;k<temporalActions.size();k++){
 				if(MaxT<temporalActions.get(k).getEndTime())
 					MaxT = (int)temporalActions.get(k).getEndTime();
 			}
-			Pi.setStartTime(MaxT);
+			
+			//for loop to calculate Max PreT
+			for(int l=0;l<Pi.getConditionsCollection().getCollection().size();l++){
+				Knowledge knowledgeToCheckForProductionTime = Pi.getConditionsCollection().getCollection().get(l);
+				Knowledge preConditionInInitialState = this.searchInKnowledgeArrayList(I, knowledgeToCheckForProductionTime);
+				int pttoCheck = preConditionInInitialState.getProductionTime();
+				if(PreT < pttoCheck)
+					PreT = pttoCheck;
+			}
+			ArrayList<Knowledge> piAddEffects = Pi.getAddEffectsCollection().getCollection();
+			ArrayList<Knowledge> piDeleteEffects = Pi.getDeleteEffectsCollection().getCollection();
+			//causal link threat check
+				for (PlacePlanAction temporalAction : temporalActions) {
+					ArrayList<Knowledge> tmpActionDeleteEffects = temporalAction.getDeleteEffectsCollection().getCollection();
+					for(Knowledge delEffect: tmpActionDeleteEffects){
+						if(piAddEffects.contains(delEffect))
+							{
+								int endTTemp = (int)temporalAction.getEndTime();
+								if(PreT < endTTemp)
+								PreT = endTTemp;
+							}
+					}
+					ArrayList<Knowledge> tmpActionConditions = temporalAction.getConditionsCollection().getCollection();
+					for(Knowledge tmpActionCondition : tmpActionConditions){
+						if(piDeleteEffects.contains(tmpActionCondition))
+						{
+							int endTTemp = (int)temporalAction.getEndTime();
+							if(PreT < endTTemp)
+							PreT = endTTemp;
+						}
+					}
+				}
+			//causal link threat check end
+			Pi.setStartTime(PreT);
+			//ArrayList<Knowledge> piAddEffects = Pi.getAddEffectsCollection().getCollection();
+			for(int k=0;k<piAddEffects.size();k++){
+				piAddEffects.get(k).setProductionTime((int)Pi.getEndTime());
+			}
+			I.addAll(piAddEffects);
 			temporalActions.add(Pi);
 		}
 		
 		this.placeActions = temporalActions;
 		return this.placeActions;
+	}
+	
+	private Knowledge searchInKnowledgeArrayList(ArrayList<Knowledge> list,Knowledge knowledge){
+		for(int i=0;i<list.size();i++){
+			if(list.get(i).equals(knowledge))
+				return list.get(i);
+		}
+		
+		return new Knowledge("dummy Statement"); //This line should never have been reached
 	}
 	/**
 	 * I, P and D,
@@ -158,7 +214,7 @@ public class PLACEPlan implements Serializable{
 	 * Temporal Converter as given on P-73 of the Dr. Adnan Thesis
 	 * @return 
 	 */
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	private ArrayList<PlacePlanAction> convertToTemporal(){
 		int startTime = 0; //The start time of the first Action
 		ArrayList<Knowledge> state = this.getInitialState().getCollection(); //I which is the initial state
@@ -209,7 +265,7 @@ public class PLACEPlan implements Serializable{
 		}
 		this.placeActions = temporalActions;
 		return this.placeActions;
-	}
+	}*/
 	
 	/**
 	 * Creates and return the deep copy of the Initial State of the agent 
@@ -230,6 +286,34 @@ public class PLACEPlan implements Serializable{
 	 */
 	public ArrayList<PlacePlanAction> getPlaceActions() {
 		return placeActions;
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub 
+		CentralSystem cs = new CentralSystem(new JShop2Planner());
+		//String fileName = "F:\\epclaimcodes\\shop2\\casestudyHospital\\hospital.ep";
+		//String fileName = "F:\\epclaimcodes\\shop2\\usman\\cleaner.txt";
+		String fileName = "F:\\epclaimcodes\\shop2\\temporal\\temporal.ep";
+		try {
+			cs.compile(fileName); 
+			for (Agent agent : cs.getPlaceObjects().getAgentsCollection().getAgentsList()) {
+				agent.setEnvironment(cs.getPlaceObjects().getEnvironment());
+				agent.setPlanner(cs.getPlanner());
+				//agent.planAndExecute();
+				PLACEPlan plan= cs.getPlanner().getPlan(agent);
+				plan.setPlacePlanActions();
+				//plan.convertToTemporal();
+				System.out.println(plan);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

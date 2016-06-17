@@ -60,14 +60,13 @@ public class JSHOP2Translator {
 		problemStr+= "(defproblem problem "+agent.getName()+"\n"
 				+CommonStringUtils.tabs(tab++)+"(\n"// knowledge start
 				+this.translateKnowledgeCollection(agent.getKnowledgeCollection())
-				//+this.translateKnowledgeCollection(agent.getKnowledgeCollection())
-				//+this.translateKnowledgeCollection(agent.getKnowledgeCollection())
+				
 				+ CommonStringUtils.tabs(--tab)+")\n" // knowledge end
 				+CommonStringUtils.tabs(tab++)+"(\n"
-				//+CommonStringUtils.tabs(tab++)+"(achieve-goals\n"
+				
 				+CommonStringUtils.tabs(tab++)+"(\n"
 				+this.translateKnowledgeCollection(agent.getGoalCollection())
-				//+ CommonStringUtils.tabs(--tab)+")\n"
+				
 				+ CommonStringUtils.tabs(--tab)+")\n"
 				+ CommonStringUtils.tabs(--tab)+")\n"
 				+"\n)";
